@@ -1,0 +1,10 @@
+function n = printvals(vals, label, start, np)
+% PRINTVALS - print a label and some floating point values from a vector
+
+fprintf (' %s ', label);
+n = 0;
+for i = start:(start+np-1)
+  fprintf ( '%8.4f ', vals(i) );
+  n = n+1;
+end % for i
+% fprintf ('\n');

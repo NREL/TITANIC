@@ -1,0 +1,22 @@
+<style type="text/css">
+body {
+	font-size:100%;
+	line-height:1.125em;
+}
+
+.bodytext p {
+	font-size:0.875em;
+}
+
+.sidenote {
+	font-size:0.75em;
+}
+</style>
+
+<!--[if !IE]>-->
+
+<style type="text/css">
+body {
+	font-size:16px;
+}
+</style>

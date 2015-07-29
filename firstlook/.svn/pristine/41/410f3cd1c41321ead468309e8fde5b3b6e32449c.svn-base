@@ -1,0 +1,74 @@
+% function make_file_list(data_path,from_date)
+%
+% generate a list of data files in the directory data_path with time stamps
+% between the date 'from_date' and 'to_date'
+%
+% INPUTS
+% ------
+% data_path;    directory of interest
+% from_date;    time stamp [yyyy mm dd HH MM SS]
+
+function [process_path,process_file] = SubTowerMakeFilelist(data_path,...
+    from_date,to_date,data_extension,formatStr)
+
+% generate empty output structures
+process_path = {};
+process_file = {};
+
+% convert the from_date into a datenum
+from_datenum = datenum(from_date);
+to_datenum = datenum(to_date);
+
+%% start by looking for files in the current directory
+listing = dir(fullfile(data_path,data_extension));
+
+% process this
+for f = 1:numel(listing)
+    if listing(f).datenum > from_datenum
+        dir_path = data_path;
+        process_path{end+1} = dir_path;
+        process_file{end+1} = listing(f).name;
+    else
+        % skip this file
+    end
+end
+
+%% Now look for sub directories to process
+listing = dir(data_path);
+do_dir = [];
+for f = 1:numel(listing)
+    if listing(f).isdir
+        if (strcmp(listing(f).name,'.') || strcmp(listing(f).name,'..'))
+        else
+            do_dir(end+1) = f;
+        end
+    end
+end
+
+%% work through those directories
+for d = 1:numel(do_dir)
+    disp(['...looking in ' data_path ' at sub directory ' listing(do_dir(d)).name])
+    % get the files in each directory
+    subdir_listing = dir(fullfile(data_path,...
+        listing(do_dir(d)).name,...
+        data_extension));
+    % process this
+    for f = 1:numel(subdir_listing)
+        subdir_listing(f).datefromname = ...
+            TowerConvertDatafilenameDatenum(subdir_listing(f).name,...
+            formatStr);
+        
+        if (subdir_listing(f).datefromname >= from_datenum) & ...
+                (subdir_listing(f).datefromname <= to_datenum)
+            dir_path = listing(do_dir(d)).name;
+            disp(['...looking for files in ' dir_path])
+            process_path{end+1} = dir_path;
+            process_file{end+1} = subdir_listing(f).name;
+        else
+            
+            % skip this file
+        end
+    end
+end
+
+

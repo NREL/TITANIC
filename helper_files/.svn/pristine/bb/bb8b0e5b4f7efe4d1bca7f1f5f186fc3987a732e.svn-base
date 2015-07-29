@@ -1,0 +1,177 @@
+function plot_TOD_date(t,x,trange,binedges,binedgelabels,varargin)
+
+%% define defaults
+options = struct('cmapname','jet',...
+    'customcmap','',...
+    'cbrewer',{''},...
+    'binlabels','',...
+    'xlabel','Time of day (UTC)',...
+    'ylabel','Date',...
+    'title','',...
+    'colorbartitle','');
+
+%# read the acceptable names
+optionNames = fieldnames(options);
+
+%# count arguments
+nArgs = length(varargin);
+if round(nArgs/2)~=nArgs/2
+    error('plot_TOD_date needs propertyName/propertyValue pairs')
+end
+
+for pair = reshape(varargin,2,[]) %# pair is {propName;propValue}
+    inpName = lower(pair{1}); %# make case insensitive
+    
+    if any(strmatch(inpName,optionNames))
+        %# overwrite options. If you want you can test for the right class here
+        %# Also, if you find out that there is an option you keep getting wrong,
+        %# you can use "if strcmp(inpName,'problemOption'),testMore,end"-statements
+        options.(inpName) = pair{2};
+    else
+        error('%s is not a recognized parameter name',inpName)
+    end
+end
+
+%% process inputs
+USE_BINEDGELABELS = 0;
+if ~exist('binedgelabels','var')
+    USE_BINEDGELABELS = 0;
+elseif isempty(binedgelabels)
+    USE_BINEDGELABELS = 0;
+else
+    USE_BINEDGELABELS = 1;
+end
+
+ninrange = numel(binedges)-1;
+more_bottom=0;
+if min(x) < min(binedges)
+    binedges = [floor(min(x)) binedges];
+    more_bottom = 1;
+end
+
+more_top = 0;
+if  max(x) > max(binedges)
+    binedges = [binedges ceil(max(x))];
+    more_top = 1;
+end
+
+%binedges = [-inf binedges inf];
+
+HH = str2num(datestr(t,'HH'));
+MM = str2num(datestr(t,'MM'));
+TOD = HH + MM/60;
+
+dd = floor(t);
+
+%% reshape data
+x = reshape(x,1,[]);
+dd = reshape(dd,1,[]);
+TOD = reshape(TOD,1,[]);
+
+%% generate the color map
+switch options.cmapname
+    case 'custom'
+        cmap = options.customcmap;
+    case 'cbrewer'
+        cmap = eval(['colormap(cbrewer(''' options.cbrewer{1} ''',''' options.cbrewer{2} ''',ninrange));']);
+    otherwise
+        cmap = eval(['colormap(' options.cmapname '(ninrange));']);
+end
+if more_top
+    cmap(end+1,:) = [0 0 0];
+end
+if more_bottom
+    cmap = [0.8 0.8 0.8;...
+        cmap];
+end
+colormap(cmap);
+
+%% plot each box
+A1 = axes('Position',[0.175 0.15 0.65 0.7]);
+hold on
+dt_all = diff(sort(TOD(~isnan(x))));
+min_dt = mode(dt_all(dt_all>0));
+min_dy = 1;
+
+hold on
+for i = 1:numel(x)
+    if ~isnan(x(i))
+        cbox(TOD(i),dd(i),x(i),...
+            min_dt,min_dy,...
+            binedges,cmap)
+    end
+end
+
+ylim([trange])
+xlim([0 24])
+
+%% tidy up
+pretty_xyplot
+set(A1,'Xtick',0:6:24,'XTickLabel',num2str([0:6:24]'))
+xlabel(options.xlabel)
+ylabel(options.ylabel)
+if ~isempty(options.title)
+    title(options.title)
+end
+datetick('y','mm/dd','keepticks','keeplimits')
+
+%% add a colorbar (cheating)
+A2 = axes('Position',[0.85 0.15 0.05 0.7]);
+
+% create a psuedo colorbar
+dy = 1/(size(cmap,1));
+for i = 1:size(cmap,1)
+    patch([0 1 1 0],...
+        [(i-1)*dy (i-1)*dy i*dy i*dy],...
+        cmap(i,:),...
+        'EdgeColor',cmap(i,:))
+    % add bin edges, if defined.
+    if USE_BINEDGELABELS
+        text(1.05,(i-1)*dy,...
+            binedgelabels{i},...
+            'Tag','AxesTickLabels')
+    else
+        text(1.05,(i-1)*dy,...
+            num2str(binedges(i)),...
+            'Tag','AxesTickLabels')
+    end
+    % add bin labels
+    if ~isempty(options.binlabels)
+        text(1.5,(i-0.5)*dy,...
+            options.binlabels{i},...
+            'Tag','AxesLabels')
+    end
+end
+% add the last bin edge labels
+if USE_BINEDGELABELS
+    text(1.05,(i)*dy,...
+        binedgelabels{i+1},...
+            'Tag','AxesTickLabels')
+else
+    text(1.05,(i)*dy,...
+        num2str(binedges(i+1)),...
+            'Tag','AxesTickLabels')
+end
+
+ylim([0 1])
+set(A2,'XTickLabel','','YTickLabel','','TickLength',[0 0])
+
+%set(A2, 'visible', 'off')
+%set(findall(A2, 'type', 'text'), 'visible', 'on')
+
+if ~isempty(options.colorbartitle)
+    title(options.colorbartitle)
+end
+
+
+function cbox(x,y,val,...
+    dx,dy,...
+    binedges,cmap)
+% figure out what color this should be
+[n,bin] = histc(val,binedges);
+
+% plot the patch
+patch([x x+dx x+dx x],...
+    [y y y+dy y+dy],...
+    cmap(bin,:),...
+    'EdgeColor',cmap(bin,:))

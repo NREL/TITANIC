@@ -1,0 +1,22 @@
+clear all
+close all
+
+DoTower = 'M5';
+
+switch DoTower
+    case 'M4'
+        load('M4_config.mat')
+    case 'M5'
+        load('M5_config.mat')
+    otherwise
+end
+
+for i = 1:numel(datastream)
+    if ~isempty(datastream{i})
+        fprintf(1,'%i & %s & %s & %i\\\\\n',...
+            i, ...
+            datastream{i}.instrument.name, ...
+            strrep(['Raw_' datastream{i}.instrument.variable],'_','\_'),...
+            datastream{i}.config.height)
+    end
+end

@@ -1,0 +1,799 @@
+function SubWriteSummaryDataMATLAB(tower,datastream,qcd,...
+	output_path,output_file)
+
+%% empty variables, labels, data and attributes
+VAL = {};
+VNAME ={};
+VLABEL= {};
+UNITS = {};
+FLAGS = {};
+DATE = {};
+HEIGHT = {};
+NPOINTS = {};
+
+%% datafile
+% number of records in the input file
+VAL{end+1} = qcd.file.ninputrecords;
+VNAME{end+1} = 'Data_File_Records';
+VLABEL{end+1} = 'Input records';
+UNITS{end+1} = '-';
+FLAGS{end+1} = [];
+HEIGHT{end+1} = NaN;
+NPOINTS{end+1} = qcd.file.ninputrecords;
+
+% number of *valid* records in the input file
+VAL{end+1} = qcd.file.npoints;
+VNAME{end+1} = 'Data_File_Valid_Records';
+VLABEL{end+1} = 'Valid records';
+UNITS{end+1} = '-';
+FLAGS{end+1} = [];
+HEIGHT{end+1} = NaN;
+NPOINTS{end+1} = qcd.file.npoints;
+
+%% individual channel statistics
+
+for di = 1:qcd.file.nstreams
+	if (di<=numel(datastream))
+		if ~isempty(datastream{di})
+			% check to see if we want this data
+			
+			if datastream{di}.qc.doqc
+				vname_sub = ['Raw_' datastream{di}.instrument.variable];
+				vlabel_sub = datastream{di}.instrument.name;
+				z = datastream{di}.config.height;
+				fields = fieldnames(qcd.datastream{di}.statistics);
+				for i =1:numel(fields)
+					switch fields{i}
+						case{'mean'}
+							VAL{end+1} = qcd.datastream{di}.statistics.(fields{i});
+							VNAME{end+1} = [vname_sub '_mean'];
+							VLABEL{end+1} = [vlabel_sub '(' num2str(z) ' m)'];
+							UNITS{end+1} = datastream{di}.instrument.units;
+							FLAGS{end+1} = qcd.datastream{di}.flags;
+							HEIGHT{end+1} = datastream{di}.config.height;
+							NPOINTS{end+1} = qcd.datastream{di}.limits;
+						case {'std'}
+							VAL{end+1} = qcd.datastream{di}.statistics.(fields{i});
+							VNAME{end+1} = [vname_sub '_sdev'];
+							VLABEL{end+1} = ['\sigma(' vlabel_sub ') (' num2str(z) ' m)'];
+							UNITS{end+1} = datastream{di}.instrument.units;
+							FLAGS{end+1} = qcd.datastream{di}.flags;
+							HEIGHT{end+1} = datastream{di}.config.height;
+							NPOINTS{end+1} = qcd.datastream{di}.limits;
+					end
+				end
+			end
+		end
+	end
+end
+
+%% wind speed and direction
+if ~isempty(tower.veldirpairs)
+	for i = 1:numel(tower.veldirpairs(:,1))
+		%height
+		z = qcd.veldirpairs{i}.height;
+		
+		% speed
+		VNAME{end+1} = ['Wind_Speed_Cup_' num2str(z) 'm'];
+		VLABEL{end+1} = ['Speed (cup, ' num2str(z) ' m)'];
+		VAL{end+1} = qcd.veldirpairs{i}.CupSpeed.value;
+		UNITS{end+1} = 'm/s';
+		FLAGS{end+1} = qcd.veldirpairs{i}.flags;
+		HEIGHT{end+1} = z;
+		NPOINTS{end+1} = qcd.veldirpairs{i}.npoints;
+		
+		% trend
+		VNAME{end+1} = ['Wind_Speed_Trend_Cup_' num2str(z) 'm'];
+		VLABEL{end+1} = ['d(U)/d(t) (cup, ' num2str(z) ' m)'];
+		VAL{end+1} = qcd.veldirpairs{i}.U_trend.value;
+		UNITS{end+1} = 'm/s^{-2}';
+		FLAGS{end+1} = qcd.veldirpairs{i}.flags;
+		HEIGHT{end+1} = z;
+		NPOINTS{end+1} = qcd.veldirpairs{i}.npoints;
+		
+		% Turbulence
+		VNAME{end+1} = ['Ti_Cup_' num2str(z) 'm'];
+		VLABEL{end+1} = ['Ti (cup, ' num2str(z) ' m)'];
+		VAL{end+1} = qcd.veldirpairs{i}.CupTi.value;
+		UNITS{end+1} = '%';
+		FLAGS{end+1} = qcd.veldirpairs{i}.flags;
+		HEIGHT{end+1} = z;
+		NPOINTS{end+1} = qcd.veldirpairs{i}.npoints;
+		
+		% direction
+		VNAME{end+1} = ['Wind_Direction_Vane_' num2str(z) 'm_mean'];
+		VLABEL{end+1} = ['Direction (Vane, ' num2str(z) ' m)'];
+		VAL{end+1} = qcd.veldirpairs{i}.direction.value;
+		UNITS{end+1} = 'degrees';
+		FLAGS{end+1} = qcd.veldirpairs{i}.flags;
+		HEIGHT{end+1} = z;
+		NPOINTS{end+1} = qcd.veldirpairs{i}.npoints;
+		
+		% standard deviation of the wind direction
+		VNAME{end+1} = ['Wind_Direction_Vane_' num2str(z) 'm_sdev'];
+		VLABEL{end+1} = ['Std. Dev. Direction (Vane, ' num2str(z) ' m)'];
+		VAL{end+1} = qcd.veldirpairs{i}.stdev_direction.value;
+		UNITS{end+1} = 'degrees';
+		FLAGS{end+1} = qcd.veldirpairs{i}.flags;
+		HEIGHT{end+1} = z;
+		NPOINTS{end+1} = qcd.veldirpairs{i}.npoints;
+		
+		% meteorological wind speed
+		VNAME{end+1} = ['Wind_Speed_Advection_Cup_' num2str(z) 'm'];
+		VLABEL{end+1} = ['Speed (cup, ' num2str(z) ' m)'];
+		VAL{end+1} = qcd.veldirpairs{i}.met_Ubar.value;
+		UNITS{end+1} = 'm/s';
+		FLAGS{end+1} = qcd.veldirpairs{i}.flags;
+		HEIGHT{end+1} = z;
+		NPOINTS{end+1} = qcd.veldirpairs{i}.npoints;
+	end
+end
+
+%% thermodynamics
+for i = 1:tower.thermodynamics.ouputlevels
+	%height
+	z = qcd.thermodynamics{i}.height;
+	
+	% Air density
+	VNAME{end+1} = ['Air_Density_' num2str(z) 'm'];
+	VLABEL{end+1} = ['Air Density (' num2str(z) ' m)'];
+	VAL{end+1} = qcd.thermodynamics{i}.airdensity.value;
+	UNITS{end+1} = 'kg/m^3';
+	FLAGS{end+1} = qcd.thermodynamics{i}.airdensity.flags;
+	HEIGHT{end+1} = z;
+	NPOINTS{end+1} = NaN;
+	
+	% barometric pressure
+	VNAME{end+1} = ['Air_Pressure_' num2str(z) 'm'];
+	VLABEL{end+1} = ['Air Pressure (' num2str(z) ' m)'];
+	VAL{end+1} = qcd.thermodynamics{i}.P_mBar.value;
+	UNITS{end+1} = 'mBar';
+	FLAGS{end+1} = qcd.thermodynamics{i}.P_mBar.flags;
+	HEIGHT{end+1} = z;
+	NPOINTS{end+1} = NaN;
+	
+	% air temperature
+	VNAME{end+1} = ['Air_Temperature_' num2str(z) 'm'];
+	VLABEL{end+1} = ['Air Temperature (' num2str(z) ' m)'];
+	VAL{end+1} = qcd.thermodynamics{i}.T.value;
+	UNITS{end+1} = 'K';
+	FLAGS{end+1} = qcd.thermodynamics{i}.T.flags;
+	HEIGHT{end+1} = z;
+	NPOINTS{end+1} = NaN;
+	
+	% Relative humidity
+	VNAME{end+1} = ['Relative_Humidity_' num2str(z) 'm'];
+	VLABEL{end+1} = ['Relative Humidity (' num2str(z) ' m)'];
+	VAL{end+1} = qcd.thermodynamics{i}.RH.value;
+	UNITS{end+1} = '%';
+	FLAGS{end+1} = qcd.thermodynamics{i}.RH.flags;
+	HEIGHT{end+1} = z;
+	NPOINTS{end+1} = NaN;
+	
+	% Potential temperature
+	VNAME{end+1} = ['Potential_Temperature_' num2str(z) 'm'];
+	VLABEL{end+1} = ['Potential Temperature (' num2str(z) ' m)'];
+	VAL{end+1} = qcd.thermodynamics{i}.PT.value;
+	UNITS{end+1} = 'K';
+	FLAGS{end+1} = qcd.thermodynamics{i}.PT.flags;
+	HEIGHT{end+1} = z;
+	NPOINTS{end+1} = NaN;
+	
+	% Virtual Potential temperature
+	VNAME{end+1} = ['Virtual_Potential_Temperature_' num2str(z) 'm'];
+	VLABEL{end+1} = ['Virtual Potential Temperature (' num2str(z) ' m)'];
+	VAL{end+1} = qcd.thermodynamics{i}.VPT.value;
+	UNITS{end+1} = 'K';
+	FLAGS{end+1} = qcd.thermodynamics{i}.VPT.flags;
+	HEIGHT{end+1} = z;
+	NPOINTS{end+1} = NaN;
+end
+
+%% Precipitation
+if~isempty(tower.precipsensor)
+    % Precipitation rate
+	VNAME{end+1} = ['Precip_Mean_' num2str(z) 'm'];
+	VLABEL{end+1} = ['Mean Preciptation Sensor Value (' num2str(z) ' m)'];
+	VAL{end+1} = qcd.precipsensormean.value;
+	UNITS{end+1} = 'K';
+	FLAGS{end+1} = qcd.precipsensormean.flags;
+	HEIGHT{end+1} = qcd.precipsensormean.z;
+	NPOINTS{end+1} = NaN;   
+end
+
+%% richardson number
+if~isempty(tower.richardsonpairs)
+	for i = 1:numel(tower.richardsonpairs(:,1))
+		%height
+		z = qcd.richardsonpairs{i}.height;
+		%label
+		zname = num2str(z(1));
+		zlabel = num2str(z(1));
+		for zi = 2:numel(z)
+			zname = [ zname '_' num2str(z(zi))];
+			zlabel = [ zlabel ', ' num2str(z(zi))];
+		end
+		
+		% Wind Speed Richardson number
+		VNAME{end+1} = ['Ri_WS_' zname 'm'];
+		VLABEL{end+1} = ['Speed Gradient Richardson (' zlabel ' m)'];
+		VAL{end+1} = qcd.richardsonpairs{i}.Ri_WS.value;
+		UNITS{end+1} = '-';
+		FLAGS{end+1} = qcd.richardsonpairs{i}.flags;
+		HEIGHT{end+1} = z;
+		NPOINTS{end+1} = NaN;
+		
+		% Wind Shear Richardson number
+		VNAME{end+1} = ['Ri_grad_' zname 'm'];
+		VLABEL{end+1} = ['Gradient Richardson (' zlabel ' m)'];
+		VAL{end+1} = qcd.richardsonpairs{i}.Ri_grad.value;
+		UNITS{end+1} = '-';
+		FLAGS{end+1} = qcd.richardsonpairs{i}.flags;
+		HEIGHT{end+1} = z;
+		NPOINTS{end+1} = NaN;
+		
+		% Brunt Vaisala Frequency
+		VNAME{end+1} = ['BruntVaisala_' zname 'm'];
+		VLABEL{end+1} = ['Brunt-Vaisala Frequency (' zlabel ' m)'];
+		VAL{end+1} = qcd.richardsonpairs{i}.BruntVaisala.value;
+		UNITS{end+1} = 's^{-1}';
+		FLAGS{end+1} = qcd.richardsonpairs{i}.flags;
+		HEIGHT{end+1} = z;
+		NPOINTS{end+1} = NaN;
+	end
+end
+
+%% wind shear and veer
+if ~isempty(cell2mat(tower.shearpairs))
+	for i = 1:numel(tower.shearpairs)
+		%height
+		z = qcd.shearpairs{i}.height;
+		%label
+		zname = num2str(z(1));
+		zlabel = num2str(z(1));
+		for zi = 2:numel(z)
+			zname = [ zname '_' num2str(z(zi))];
+			zlabel = [ zlabel ', ' num2str(z(zi))];
+		end
+		
+		% shear
+		VNAME{end+1} = ['Wind_Shear_' zname 'm'];
+		VLABEL{end+1} = ['Wind Shear (' zlabel ' m)'];
+		VAL{end+1} = qcd.shearpairs{i}.shear.value;
+		UNITS{end+1} = '-';
+		FLAGS{end+1} = qcd.shearpairs{i}.flags;
+		HEIGHT{end+1} = z;
+		NPOINTS{end+1} = NaN;
+		
+		% Friction velocity
+		VNAME{end+1} = ['Friction_Velocity_Cup_' zname 'm'];
+		VLABEL{end+1} = ['Log-Law u_* (' zlabel ' m)'];
+		VAL{end+1} = qcd.shearpairs{i}.frictionvelocity.value;
+		UNITS{end+1} = 'ms^{-1}';
+		FLAGS{end+1} = qcd.shearpairs{i}.flags;
+		HEIGHT{end+1} = z;
+		NPOINTS{end+1} = NaN;
+		
+		% Roughness length
+		VNAME{end+1} = ['Roughness_Length_Cup_' zname 'm'];
+		VLABEL{end+1} = ['Log-Law z_0 (' zlabel ' m)'];
+		VAL{end+1} = qcd.shearpairs{i}.roughnesslength.value;
+		UNITS{end+1} = 'm';
+		FLAGS{end+1} = qcd.shearpairs{i}.flags;
+		HEIGHT{end+1} = z;
+		NPOINTS{end+1} = NaN;
+		
+		% veer
+		VNAME{end+1} = ['Wind_Veer_' zname 'm'];
+		VLABEL{end+1} = ['Wind Veer (' zlabel ' m)'];
+		VAL{end+1} = qcd.shearpairs{i}.veer.value;
+		UNITS{end+1} = '-';
+		FLAGS{end+1} = qcd.shearpairs{i}.flags;
+		HEIGHT{end+1} = z;
+		NPOINTS{end+1} = NaN;
+	end
+end
+
+
+%% sonic anemometer data
+if ~isempty(tower.sonicpairs)
+	for si = 1:numel(tower.sonicpairs(:,1))
+		% height
+		z = qcd.sonicpairs{si}.height;
+		
+		vname_sub = ['Sonic_' num2str(z) ];
+		fields = fieldnames(qcd.sonicpairs{si});
+		
+		for i =1:numel(fields)
+            switch fields{i}
+                case 'Uxbar'
+                    VAL{end+1} = qcd.sonicpairs{si}.(fields{i}).value;
+                    VNAME{end+1} = ['Wind_Speed_x_' vname_sub 'm'];
+                    VLABEL{end+1} = ['Speed Ux (sonic,' num2str(z) 'm)'];
+                    UNITS{end+1} = 'm/s';
+                    FLAGS{end+1} = qcd.sonicpairs{si}.flags;
+                    HEIGHT{end+1} = z;
+                    NPOINTS{end+1} = qcd.sonicpairs{si}.npoints;
+                case 'Uybar'
+                    VAL{end+1} = qcd.sonicpairs{si}.(fields{i}).value;
+                    VNAME{end+1} = ['Wind_Speed_y_' vname_sub 'm'];
+                    VLABEL{end+1} = ['Speed Uy (sonic,' num2str(z) 'm)'];
+                    UNITS{end+1} = 'm/s';
+                    FLAGS{end+1} = qcd.sonicpairs{si}.flags;
+                    HEIGHT{end+1} = z;
+                    NPOINTS{end+1} = qcd.sonicpairs{si}.npoints;
+                case 'Uzbar'
+                    VAL{end+1} = qcd.sonicpairs{si}.(fields{i}).value;
+                    VNAME{end+1} = ['Wind_Speed_z_' vname_sub 'm'];
+                    VLABEL{end+1} = ['Speed Uz (sonic,' num2str(z) 'm)'];
+                    UNITS{end+1} = 'm/s';
+                    FLAGS{end+1} = qcd.sonicpairs{si}.flags;
+                    HEIGHT{end+1} = z;
+                    NPOINTS{end+1} = qcd.sonicpairs{si}.npoints;
+                case 'Tsbar'
+                    VAL{end+1} = qcd.sonicpairs{si}.(fields{i}).value;
+                    VNAME{end+1} = ['Air_Temperature_' vname_sub 'm'];
+                    VLABEL{end+1} = ['Air temperature (sonic,' num2str(z) 'm)'];
+                    UNITS{end+1} = 'degrees';
+                    FLAGS{end+1} = qcd.sonicpairs{si}.flags;
+                    HEIGHT{end+1} = z;
+                    NPOINTS{end+1} = qcd.sonicpairs{si}.npoints;                    
+				case 'horizspeed'
+					VAL{end+1} = qcd.sonicpairs{si}.(fields{i}).value;
+					VNAME{end+1} = ['Wind_Speed_Horizontal_' vname_sub 'm'];
+					VLABEL{end+1} = ['Speed (sonic,' num2str(z) 'm)'];
+					UNITS{end+1} = 'm/s';
+					FLAGS{end+1} = qcd.sonicpairs{si}.flags;
+					HEIGHT{end+1} = z;
+					NPOINTS{end+1} = qcd.sonicpairs{si}.npoints;
+				case 'totalspeed'
+					VAL{end+1} = qcd.sonicpairs{si}.(fields{i}).value;
+					VNAME{end+1} = ['Wind_Speed_Total_' vname_sub 'm'];
+					VLABEL{end+1} = ['Total Speed (sonic,' num2str(z) 'm)'];
+					UNITS{end+1} = 'm/s';
+					FLAGS{end+1} = qcd.sonicpairs{si}.flags;
+					HEIGHT{end+1} = z;
+					NPOINTS{end+1} = qcd.sonicpairs{si}.npoints;
+				case 'Umean'
+					VAL{end+1} = qcd.sonicpairs{si}.(fields{i}).value;
+					VNAME{end+1} = ['Wind_Speed_Advection_' vname_sub 'm'];
+					VLABEL{end+1} = ['Advection Speed (sonic,' num2str(z) 'm)'];
+					UNITS{end+1} = 'm/s';
+					FLAGS{end+1} = qcd.sonicpairs{si}.flags;
+					HEIGHT{end+1} = z;
+					NPOINTS{end+1} = qcd.sonicpairs{si}.npoints;
+				case 'CupEqHorizSpeed'
+					VAL{end+1} = qcd.sonicpairs{si}.(fields{i}).value;
+					VNAME{end+1} = ['Wind_Speed_CupEq_' vname_sub 'm'];
+					VLABEL{end+1} = ['Cup Equivalent Speed (sonic,' num2str(z) 'm)'];
+					UNITS{end+1} = 'm/s';
+					FLAGS{end+1} = qcd.sonicpairs{si}.flags;
+					HEIGHT{end+1} = z;
+					NPOINTS{end+1} = qcd.sonicpairs{si}.npoints;
+				case 'CupEqHorizTi'
+					VAL{end+1} = qcd.sonicpairs{si}.(fields{i}).value;
+					VNAME{end+1} = ['Ti_CupEq_' vname_sub 'm'];
+					VLABEL{end+1} = ['Cup Equivalent Ti (sonic,' num2str(z) 'm)'];
+					UNITS{end+1} = '%';
+					FLAGS{end+1} = qcd.sonicpairs{si}.flags;
+					HEIGHT{end+1} = z;
+					NPOINTS{end+1} = qcd.sonicpairs{si}.npoints;
+				case 'inflowangle'
+					VAL{end+1} = qcd.sonicpairs{si}.(fields{i}).value;
+					VNAME{end+1} = ['Wind_Inflow_Angle_' vname_sub 'm'];
+					VLABEL{end+1} = ['Angle from horizontal (sonic,' num2str(z) 'm)'];
+					UNITS{end+1} = 'm/s';
+					FLAGS{end+1} = qcd.sonicpairs{si}.flags;
+					HEIGHT{end+1} = z;
+					NPOINTS{end+1} = qcd.sonicpairs{si}.npoints;
+				case 'direction'
+					VAL{end+1} = qcd.sonicpairs{si}.(fields{i}).value;
+					VNAME{end+1} = ['Wind_Direction_' vname_sub 'm'];
+					VLABEL{end+1} = ['Direction (sonic,' num2str(z) 'm)'];
+					UNITS{end+1} = 'degrees';
+					FLAGS{end+1} = qcd.sonicpairs{si}.flags;
+					HEIGHT{end+1} = z;
+					NPOINTS{end+1} = qcd.sonicpairs{si}.npoints;
+				case 'U_trend'
+					VAL{end+1} = qcd.sonicpairs{si}.(fields{i}).value;
+					VNAME{end+1} = ['dUdt_' vname_sub 'm'];
+					VLABEL{end+1} = ['d(u)/d(t) (sonic,' num2str(z) 'm)'];
+					UNITS{end+1} = 'm s^{-2}';
+					FLAGS{end+1} = qcd.sonicpairs{si}.flags;
+					HEIGHT{end+1} = z;
+					NPOINTS{end+1} = qcd.sonicpairs{si}.npoints;
+				case 'u_std'
+					VAL{end+1} = qcd.sonicpairs{si}.(fields{i}).value;
+					VNAME{end+1} = ['Sigma_u_' vname_sub 'm'];
+					VLABEL{end+1} = ['\sigma(u) (sonic,' num2str(z) 'm)'];
+					UNITS{end+1} = 'ms^{-1}';
+					FLAGS{end+1} = qcd.sonicpairs{si}.flags;
+					HEIGHT{end+1} = z;
+					NPOINTS{end+1} = qcd.sonicpairs{si}.npoints;
+				case 'v_std'
+					VAL{end+1} = qcd.sonicpairs{si}.(fields{i}).value;
+					VNAME{end+1} = ['Sigma_v_' vname_sub 'm'];
+					VLABEL{end+1} = ['\sigma(v) (sonic,' num2str(z) 'm)'];
+					UNITS{end+1} = 'ms^{-1}';
+					FLAGS{end+1} = qcd.sonicpairs{si}.flags;
+					HEIGHT{end+1} = z;
+					NPOINTS{end+1} = qcd.sonicpairs{si}.npoints;
+				case 'w_std'
+					VAL{end+1} = qcd.sonicpairs{si}.(fields{i}).value;
+					VNAME{end+1} = ['Sigma_w_' vname_sub 'm'];
+					VLABEL{end+1} = ['\sigma(w) (sonic,' num2str(z) 'm)'];
+					UNITS{end+1} = 'ms^{-1}';
+					FLAGS{end+1} = qcd.sonicpairs{si}.flags;
+					HEIGHT{end+1} = z;
+					NPOINTS{end+1} = qcd.sonicpairs{si}.npoints;
+				case 'T_std'
+					VAL{end+1} = qcd.sonicpairs{si}.(fields{i}).value;
+					VNAME{end+1} = ['Sigma_T_' vname_sub 'm'];
+					VLABEL{end+1} = ['\sigma(T) (sonic,' num2str(z) 'm)'];
+					UNITS{end+1} = 'K';
+					FLAGS{end+1} = qcd.sonicpairs{si}.flags;
+					HEIGHT{end+1} = z;
+					NPOINTS{end+1} = qcd.sonicpairs{si}.npoints;
+				case 'ustar'
+					VAL{end+1} = qcd.sonicpairs{si}.(fields{i}).value;
+					VNAME{end+1} = ['ustar_' vname_sub 'm'];
+					VLABEL{end+1} = ['u_* (' num2str(z) 'm)'];
+					UNITS{end+1} = 'm/s';
+					FLAGS{end+1} = qcd.sonicpairs{si}.flags;
+					HEIGHT{end+1} = z;
+					NPOINTS{end+1} = qcd.sonicpairs{si}.npoints;
+				case 'Tstar'
+					VAL{end+1} = qcd.sonicpairs{si}.(fields{i}).value;
+					VNAME{end+1} = ['Tstar_' vname_sub 'm'];
+					VLABEL{end+1} = ['T_* (' num2str(z) 'm)'];
+					UNITS{end+1} = 'K';
+					FLAGS{end+1} = qcd.sonicpairs{si}.flags;
+					HEIGHT{end+1} = z;
+					NPOINTS{end+1} = qcd.sonicpairs{si}.npoints;
+				case 'wT_mean'
+					VAL{end+1} = qcd.sonicpairs{si}.(fields{i}).value;
+					VNAME{end+1} = ['wT_' vname_sub 'm_mean'];
+					VLABEL{end+1} = ['mean(w''T'') (sonic,' num2str(z) 'm)'];
+					UNITS{end+1} = 'm s^{-1} K';
+					FLAGS{end+1} = qcd.sonicpairs{si}.flags;
+					HEIGHT{end+1} = z;
+					NPOINTS{end+1} = qcd.sonicpairs{si}.npoints;
+				case 'MOlength'
+					VAL{end+1} = qcd.sonicpairs{si}.(fields{i}).value;
+					VNAME{end+1} = ['MO_Length_' vname_sub 'm'];
+					VLABEL{end+1} = ['Monin-Obukhov Length (' num2str(z) 'm)'];
+					UNITS{end+1} = 'm';
+					FLAGS{end+1} = qcd.sonicpairs{si}.(fields{i}).flags;
+					HEIGHT{end+1} = z;
+					NPOINTS{end+1} = qcd.sonicpairs{si}.npoints;
+				case 'zoverMOlength'
+					VAL{end+1} = qcd.sonicpairs{si}.(fields{i}).value;
+					VNAME{end+1} = ['zover_MO_Length_' vname_sub 'm'];
+					VLABEL{end+1} = ['Stability parameter z/L (' num2str(z) 'm)'];
+					UNITS{end+1} = '-';
+					FLAGS{end+1} = qcd.sonicpairs{si}.(fields{i}).flags;
+					HEIGHT{end+1} = z;
+					NPOINTS{end+1} = qcd.sonicpairs{si}.npoints;
+				case 'heatflux'
+					VAL{end+1} = qcd.sonicpairs{si}.(fields{i}).value;
+					VNAME{end+1} = ['Heat_flux_' vname_sub 'm'];
+					VLABEL{end+1} = ['Sensible heat flux (' num2str(z) 'm)'];
+					UNITS{end+1} = 'm.k/s';
+					FLAGS{end+1} = qcd.sonicpairs{si}.flags;
+					HEIGHT{end+1} = z;
+					NPOINTS{end+1} = qcd.sonicpairs{si}.npoints;
+				case 'momentumflux'
+					VAL{end+1} = qcd.sonicpairs{si}.(fields{i}).value;
+					VNAME{end+1} = ['momentum_flux_' vname_sub 'm'];
+					VLABEL{end+1} = ['Momentum flux (' num2str(z) 'm)'];
+					UNITS{end+1} = 'N/m^2';
+					FLAGS{end+1} = qcd.sonicpairs{si}.flags;
+					HEIGHT{end+1} = z;
+					NPOINTS{end+1} = qcd.sonicpairs{si}.npoints;
+					% LENGTH SCALES					
+				case 'L_integral_u'
+					VAL{end+1} = qcd.sonicpairs{si}.(fields{i}).value;
+					VNAME{end+1} = ['L_integral_u_' vname_sub 'm'];
+					VLABEL{end+1} = ['Integral Length Scale (u) (' num2str(z) 'm)'];
+					UNITS{end+1} = 'm';
+					FLAGS{end+1} = qcd.sonicpairs{si}.flags;
+					HEIGHT{end+1} = z;
+					NPOINTS{end+1} = qcd.sonicpairs{si}.npoints;
+				case 'L_integral_v'
+					VAL{end+1} = qcd.sonicpairs{si}.(fields{i}).value;
+					VNAME{end+1} = ['L_integral_v_' vname_sub 'm'];
+					VLABEL{end+1} = ['Integral Length Scale (v) (' num2str(z) 'm)'];
+					UNITS{end+1} = 'm';
+					FLAGS{end+1} = qcd.sonicpairs{si}.flags;
+					HEIGHT{end+1} = z;
+					NPOINTS{end+1} = qcd.sonicpairs{si}.npoints;
+				case 'L_integral_w'
+					VAL{end+1} = qcd.sonicpairs{si}.(fields{i}).value;
+					VNAME{end+1} = ['L_integral_w_' vname_sub 'm'];
+					VLABEL{end+1} = ['Integral Length Scale (w) (' num2str(z) 'm)'];
+					UNITS{end+1} = 'm';
+					FLAGS{end+1} = qcd.sonicpairs{si}.flags;
+					HEIGHT{end+1} = z;
+					NPOINTS{end+1} = qcd.sonicpairs{si}.npoints;
+				case 'L_zc_u'
+					VAL{end+1} = qcd.sonicpairs{si}.(fields{i}).value;
+					VNAME{end+1} = ['L_zc_u_' vname_sub 'm'];
+					VLABEL{end+1} = ['Zero-crossing distance (u) (' num2str(z) 'm)'];
+					UNITS{end+1} = 'm';
+					FLAGS{end+1} = qcd.sonicpairs{si}.flags;
+					HEIGHT{end+1} = z;
+					NPOINTS{end+1} = qcd.sonicpairs{si}.npoints;
+				case 'L_zc_v'
+					VAL{end+1} = qcd.sonicpairs{si}.(fields{i}).value;
+					VNAME{end+1} = ['L_zc_v_' vname_sub 'm'];
+					VLABEL{end+1} = ['Zero-crossing distance (v) (' num2str(z) 'm)'];
+					UNITS{end+1} = 'm';
+					FLAGS{end+1} = qcd.sonicpairs{si}.flags;
+					HEIGHT{end+1} = z;
+					NPOINTS{end+1} = qcd.sonicpairs{si}.npoints;
+				case 'L_zc_w'
+					VAL{end+1} = qcd.sonicpairs{si}.(fields{i}).value;
+					VNAME{end+1} = ['L_zc_w_' vname_sub 'm'];
+					VLABEL{end+1} = ['Zero-crossing distance (w) (' num2str(z) 'm)'];
+					UNITS{end+1} = 'm';
+					FLAGS{end+1} = qcd.sonicpairs{si}.flags;
+					HEIGHT{end+1} = z;
+					NPOINTS{end+1} = qcd.sonicpairs{si}.npoints;
+				case 'L_sz_u'
+					VAL{end+1} = qcd.sonicpairs{si}.(fields{i}).value;
+					VNAME{end+1} = ['L_sz_u_' vname_sub 'm'];
+					VLABEL{end+1} = ['Zero-crossing integral length scale (u) (' num2str(z) 'm)'];
+					UNITS{end+1} = 'm';
+					FLAGS{end+1} = qcd.sonicpairs{si}.flags;
+					HEIGHT{end+1} = z;
+					NPOINTS{end+1} = qcd.sonicpairs{si}.npoints;
+				case 'L_sz_v'
+					VAL{end+1} = qcd.sonicpairs{si}.(fields{i}).value;
+					VNAME{end+1} = ['L_sz_v_' vname_sub 'm'];
+					VLABEL{end+1} = ['Zero-crossing integral length scale (v) (' num2str(z) 'm)'];
+					UNITS{end+1} = 'm';
+					FLAGS{end+1} = qcd.sonicpairs{si}.flags;
+					HEIGHT{end+1} = z;
+					NPOINTS{end+1} = qcd.sonicpairs{si}.npoints;
+				case 'L_sz_w'
+					VAL{end+1} = qcd.sonicpairs{si}.(fields{i}).value;
+					VNAME{end+1} = ['L_sz_w_' vname_sub 'm'];
+					VLABEL{end+1} = ['Zero-crossing integral length scale (w) (' num2str(z) 'm)'];
+					UNITS{end+1} = 'm';
+					FLAGS{end+1} = qcd.sonicpairs{si}.flags;
+					HEIGHT{end+1} = z;
+					NPOINTS{end+1} = qcd.sonicpairs{si}.npoints;
+				case 'L_Kaim_u'
+					VAL{end+1} = qcd.sonicpairs{si}.(fields{i}).value;
+					VNAME{end+1} = ['L_Kaim_u_' vname_sub 'm'];
+					VLABEL{end+1} = ['Kaimal-fit integral length scale (u) (' num2str(z) 'm)'];
+					UNITS{end+1} = 'm';
+					FLAGS{end+1} = qcd.sonicpairs{si}.flags;
+					HEIGHT{end+1} = z;
+					NPOINTS{end+1} = qcd.sonicpairs{si}.npoints;
+				case 'L_Kaim_v'
+					VAL{end+1} = qcd.sonicpairs{si}.(fields{i}).value;
+					VNAME{end+1} = ['L_Kaim_v_' vname_sub 'm'];
+					VLABEL{end+1} = ['Kaimal-fit integral length scale (v) (' num2str(z) 'm)'];
+					UNITS{end+1} = 'm';
+					FLAGS{end+1} = qcd.sonicpairs{si}.flags;
+					HEIGHT{end+1} = z;
+					NPOINTS{end+1} = qcd.sonicpairs{si}.npoints;
+				case 'L_Kaim_w'
+					VAL{end+1} = qcd.sonicpairs{si}.(fields{i}).value;
+					VNAME{end+1} = ['L_Kaim_w_' vname_sub 'm'];
+					VLABEL{end+1} = ['Kaimal-fit integral length scale (w) (' num2str(z) 'm)'];
+					UNITS{end+1} = 'm';
+					FLAGS{end+1} = qcd.sonicpairs{si}.flags;
+					HEIGHT{end+1} = z;
+					NPOINTS{end+1} = qcd.sonicpairs{si}.npoints;
+				case 'L_peakK_u'
+					VAL{end+1} = qcd.sonicpairs{si}.(fields{i}).value;
+					VNAME{end+1} = ['L_peakK_u_' vname_sub 'm'];
+					VLABEL{end+1} = ['Spectral-peak length scale (u) (' num2str(z) 'm)'];
+					UNITS{end+1} = 'm';
+					FLAGS{end+1} = qcd.sonicpairs{si}.flags;
+					HEIGHT{end+1} = z;
+					NPOINTS{end+1} = qcd.sonicpairs{si}.npoints;
+				case 'L_peakK_v'
+					VAL{end+1} = qcd.sonicpairs{si}.(fields{i}).value;
+					VNAME{end+1} = ['L_peakK_v_' vname_sub 'm'];
+					VLABEL{end+1} = ['Spectral-peak length scale (v) (' num2str(z) 'm)'];
+					UNITS{end+1} = 'm';
+					FLAGS{end+1} = qcd.sonicpairs{si}.flags;
+					HEIGHT{end+1} = z;
+					NPOINTS{end+1} = qcd.sonicpairs{si}.npoints;
+				case 'L_peakK_w'
+					VAL{end+1} = qcd.sonicpairs{si}.(fields{i}).value;
+					VNAME{end+1} = ['L_peakK_w_' vname_sub 'm'];
+					VLABEL{end+1} = ['Spectral-peak length scale (w) (' num2str(z) 'm)'];
+					UNITS{end+1} = 'm';
+					FLAGS{end+1} = qcd.sonicpairs{si}.flags;
+					HEIGHT{end+1} = z;
+					NPOINTS{end+1} = qcd.sonicpairs{si}.npoints;
+					% TURBULENCE
+				case 'TKE'
+					VAL{end+1} = qcd.sonicpairs{si}.(fields{i}).value;
+					VNAME{end+1} = ['TKE_' vname_sub 'm_mean'];
+					VLABEL{end+1} = ['Turbulent Kinetic Energy (' num2str(z) 'm)'];
+					UNITS{end+1} = 'm^2s^{-1}';
+					FLAGS{end+1} = qcd.sonicpairs{si}.flags;
+					HEIGHT{end+1} = z;
+					NPOINTS{end+1} = qcd.sonicpairs{si}.npoints;
+				case 'TKE_peak'
+					VAL{end+1} = qcd.sonicpairs{si}.(fields{i}).value;
+					VNAME{end+1} = ['TKE_' vname_sub 'm_peak'];
+					VLABEL{end+1} = ['Peak TKE (' num2str(z) 'm)'];
+					UNITS{end+1} = 'm^2s^{-2}';
+					FLAGS{end+1} = qcd.sonicpairs{si}.flags;
+					HEIGHT{end+1} = z;
+					NPOINTS{end+1} = qcd.sonicpairs{si}.npoints;
+				case 'CTKE'
+					VAL{end+1} = qcd.sonicpairs{si}.(fields{i}).value;
+					VNAME{end+1} = ['CTKE_' vname_sub 'm_mean'];
+					VLABEL{end+1} = ['Coherent TKE (' num2str(z) 'm)'];
+					UNITS{end+1} = 'm^2s^{-2}';
+					FLAGS{end+1} = qcd.sonicpairs{si}.flags;
+					HEIGHT{end+1} = z;
+					NPOINTS{end+1} = qcd.sonicpairs{si}.npoints;
+				case 'CTKE_peak'
+					VAL{end+1} = qcd.sonicpairs{si}.(fields{i}).value;
+					VNAME{end+1} = ['CTKE_' vname_sub 'm_peak'];
+					VLABEL{end+1} = ['Peak Coherent TKE (' num2str(z) 'm)'];
+					UNITS{end+1} = 'm^2s^{-2}';
+					FLAGS{end+1} = qcd.sonicpairs{si}.flags;
+					HEIGHT{end+1} = z;
+					NPOINTS{end+1} = qcd.sonicpairs{si}.npoints;
+				case 'CTKE_down_peak'
+					VAL{end+1} = qcd.sonicpairs{si}.(fields{i}).value;
+					VNAME{end+1} = ['CTKE_down_' vname_sub 'm_peak'];
+					VLABEL{end+1} = ['Peak Downward Coherent TKE (' num2str(z) 'm)'];
+					UNITS{end+1} = 'm^3s^{-2}';
+					FLAGS{end+1} = qcd.sonicpairs{si}.flags;
+					HEIGHT{end+1} = z;
+					NPOINTS{end+1} = qcd.sonicpairs{si}.npoints;
+				case 'CTKE_up_peak'
+					VAL{end+1} = qcd.sonicpairs{si}.(fields{i}).value;
+					VNAME{end+1} = ['CTKE_up_' vname_sub 'm_peak'];
+					VLABEL{end+1} = ['Peak Upward Coherent TKE (' num2str(z) 'm)'];
+					UNITS{end+1} = 'm^3s^{-2}';
+					FLAGS{end+1} = qcd.sonicpairs{si}.flags;
+					HEIGHT{end+1} = z;
+					NPOINTS{end+1} = qcd.sonicpairs{si}.npoints;
+				case 'directdissipationrate'
+					VAL{end+1} = qcd.sonicpairs{si}.(fields{i}).value;
+					VNAME{end+1} = ['Drate_direct_' vname_sub 'm'];
+					VLABEL{end+1} = ['Dissipation rate (Direct, ' num2str(z) 'm)'];
+					UNITS{end+1} = 'm^2s^{3}';
+					FLAGS{end+1} = qcd.sonicpairs{si}.flags;
+					HEIGHT{end+1} = z;
+					NPOINTS{end+1} = qcd.sonicpairs{si}.npoints;
+				case 'SFdissipationrate'
+					VAL{end+1} = qcd.sonicpairs{si}.(fields{i}).value;
+					VNAME{end+1} = ['Drate_SF_' vname_sub 'm'];
+					VLABEL{end+1} = ['Dissipation rate (SF, ' num2str(z) 'm)'];
+					UNITS{end+1} = 'm^2s^{3}';
+					FLAGS{end+1} = qcd.sonicpairs{si}.flags;
+					HEIGHT{end+1} = z;
+					NPOINTS{end+1} = qcd.sonicpairs{si}.npoints;
+				case 'cv2'
+					VAL{end+1} = qcd.sonicpairs{si}.(fields{i}).value;
+					VNAME{end+1} = ['cv2_' vname_sub 'm'];
+					VLABEL{end+1} = ['Velocity structure function parameter (' num2str(z) 'm)'];
+					UNITS{end+1} = 'm^2/s^{-2}';
+					FLAGS{end+1} = qcd.sonicpairs{si}.flags;
+					HEIGHT{end+1} = z;
+					NPOINTS{end+1} = qcd.sonicpairs{si}.npoints;
+				case 'cT2'
+					VAL{end+1} = qcd.sonicpairs{si}.(fields{i}).value;
+					VNAME{end+1} = ['cT2_' vname_sub 'm'];
+					VLABEL{end+1} = ['Temperature structure function parameter (' num2str(z) 'm)'];
+					UNITS{end+1} = 'k^2';
+					FLAGS{end+1} = qcd.sonicpairs{si}.flags;
+					HEIGHT{end+1} = z;
+					NPOINTS{end+1} = qcd.sonicpairs{si}.npoints;
+				case 'boom_velocity_peak_x'
+					VAL{end+1} = qcd.sonicpairs{si}.(fields{i}).value;
+					VNAME{end+1} = ['boom_velocity_peak_x_' vname_sub 'm'];
+					VLABEL{end+1} = ['Boom peak velocity (x, ' num2str(z) 'm)'];
+					UNITS{end+1} = 'ms^{-2}';
+					FLAGS{end+1} = qcd.sonicpairs{si}.flags;
+					HEIGHT{end+1} = z;
+					NPOINTS{end+1} = qcd.sonicpairs{si}.npoints;
+				case 'boom_velocity_peak_y'
+					VAL{end+1} = qcd.sonicpairs{si}.(fields{i}).value;
+					VNAME{end+1} = ['boom_velocity_peak_y_' vname_sub 'm'];
+					VLABEL{end+1} = ['Boom peak velocity (y, ' num2str(z) 'm)'];
+					UNITS{end+1} = 'ms^{-2}';
+					FLAGS{end+1} = qcd.sonicpairs{si}.flags;
+					HEIGHT{end+1} = z;
+					NPOINTS{end+1} = qcd.sonicpairs{si}.npoints;
+				case 'boom_velocity_peak_z'
+					VAL{end+1} = qcd.sonicpairs{si}.(fields{i}).value;
+					VNAME{end+1} = ['boom_velocity_peak_z_' vname_sub 'm'];
+					VLABEL{end+1} = ['Boom peak velocity (z, ' num2str(z) 'm)'];
+					UNITS{end+1} = 'ms^{-2}';
+					FLAGS{end+1} = qcd.sonicpairs{si}.flags;
+					HEIGHT{end+1} = z;
+					NPOINTS{end+1} = qcd.sonicpairs{si}.npoints;
+				case 'boom_velocity_RMS_x'
+					VAL{end+1} = qcd.sonicpairs{si}.(fields{i}).value;
+					VNAME{end+1} = ['boom_velocity_RMS_x_' vname_sub 'm'];
+					VLABEL{end+1} = ['Boom RMS velocity (x, ' num2str(z) 'm)'];
+					UNITS{end+1} = 'ms^{-2}';
+					FLAGS{end+1} = qcd.sonicpairs{si}.flags;
+					HEIGHT{end+1} = z;
+					NPOINTS{end+1} = qcd.sonicpairs{si}.npoints;
+				case 'boom_velocity_RMS_y'
+					VAL{end+1} = qcd.sonicpairs{si}.(fields{i}).value;
+					VNAME{end+1} = ['boom_velocity_RMS_y_' vname_sub 'm'];
+					VLABEL{end+1} = ['Boom RMS velocity (y, ' num2str(z) 'm)'];
+					UNITS{end+1} = 'ms^{-2}';
+					FLAGS{end+1} = qcd.sonicpairs{si}.flags;
+					HEIGHT{end+1} = z;
+					NPOINTS{end+1} = qcd.sonicpairs{si}.npoints;
+				case 'boom_velocity_RMS_z'
+					VAL{end+1} = qcd.sonicpairs{si}.(fields{i}).value;
+					VNAME{end+1} = ['boom_velocity_RMS_z_' vname_sub 'm'];
+					VLABEL{end+1} = ['Boom RMS velocity (z, ' num2str(z) 'm)'];
+					UNITS{end+1} = 'ms^{-2}';
+					FLAGS{end+1} = qcd.sonicpairs{si}.flags;
+					HEIGHT{end+1} = z;
+					NPOINTS{end+1} = qcd.sonicpairs{si}.npoints;
+				case 'boom_accn_mean_z'
+					VAL{end+1} = qcd.sonicpairs{si}.(fields{i}).value;
+					VNAME{end+1} = ['boom_accn_mean_z_' vname_sub 'm'];
+					VLABEL{end+1} = ['Boom mean acceleration (z, ' num2str(z) 'm)'];
+					UNITS{end+1} = 'ms^{-2}';
+					FLAGS{end+1} = qcd.sonicpairs{si}.flags;
+					HEIGHT{end+1} = z;
+					NPOINTS{end+1} = qcd.sonicpairs{si}.npoints;
+				case 'boom_accn_RMS_z'
+					VAL{end+1} = qcd.sonicpairs{si}.(fields{i}).value;
+					VNAME{end+1} = ['boom_accn_RMS_z_' vname_sub 'm'];
+					VLABEL{end+1} = ['Boom RMS acceleration (z, ' num2str(z) 'm)'];
+					UNITS{end+1} = 'ms^{-2}';
+					FLAGS{end+1} = qcd.sonicpairs{si}.flags;
+					HEIGHT{end+1} = z;
+					NPOINTS{end+1} = qcd.sonicpairs{si}.npoints;
+			end
+		end
+	end
+end
+
+%% Surface heat flux
+VAL{end+1} = qcd.surface.wT_mean.value;
+VNAME{end+1} = 'Surface_mean_wT';
+VLABEL{end+1} = ['Surface w''T'''];
+UNITS{end+1} = 'm s^{-1} K';
+FLAGS{end+1} = qcd.surface.wT_mean.flags;
+HEIGHT{end+1} = NaN;
+NPOINTS{end+1} = qcd.surface.wT_mean.npoints;
+
+VAL{end+1} = qcd.surface.wT_meanheight.value;
+VNAME{end+1} = 'Surface_mean_wT_Height';
+VLABEL{end+1} = ['Height of w''T'' (surface) (z)'];
+UNITS{end+1} = 'm';
+FLAGS{end+1} = qcd.surface.wT_mean.flags;
+HEIGHT{end+1} = NaN;
+NPOINTS{end+1} = qcd.surface.wT_mean.npoints;
+
+
+%% export the data
+% new file
+for vi = 1:numel(VNAME)
+	% make a new variable
+	data_out.(VNAME{vi}).val = VAL{vi};
+	data_out.(VNAME{vi}).date = qcd.file.starttime_UTC;
+	data_out.(VNAME{vi}).label = VLABEL{vi};
+	data_out.(VNAME{vi}).units = UNITS{vi};
+	data_out.(VNAME{vi}).height = HEIGHT{vi};
+	data_out.(VNAME{vi}).npoints = NPOINTS{vi};
+	data_out.(VNAME{vi}).flags{1} = FLAGS{vi};
+end
+
+%% save processing information
+data_out.processing = tower.processing;
+
+%% and write it out
+save(fullfile(output_path,output_file),'-struct','data_out')

@@ -1,0 +1,760 @@
+function FMetDisplay = SubDisplayMetData(tower,datastream,qcd,FMetDisplay)
+
+% heading
+axtitle = axes('Position',[0.55 0.85 0.2 0.05],'Parent',FMetDisplay);
+text(0.5,0.25,...
+    {datestr(qcd.file.starttime,'dd mmm yyyy') ; ...
+    [datestr(qcd.file.starttime, 'HH:MM:SS') ' ' tower.timezone ];...
+    ' ';
+    ['Data file: ' strrep(tower.processing.datafile.name,'_','\_')];...
+    ['Processed on: ' datestr(now, 'mmm dd yyyy, HH:MM')];...
+    ['Configuration file: ' strrep(tower.processing.configfile.name,'_','\_')];...
+    ['Code: ' num2str(tower.processing.code.version,'%3.3f')...
+    ' (' datestr(tower.processing.code.date,'mmm dd yyyy') ')'];...
+    ['Host ' tower.processing.hostname];...
+    [' '];...
+    ['Key:'];['Black = OK. Gray = flagged. Red = Failed.']},...
+    'HorizontalAlignment','center',...
+    'VerticalAlignment','middle',...
+    'Parent',axtitle)
+set(axtitle,'Visible','off')
+
+%% AXES
+% velocity profile
+axvelprofile = axes('Position',[0.1 0.05 0.2 0.45],'Parent',FMetDisplay);
+hvelprofile = [];
+lstringvelprofile = {};
+
+% turbulence profile
+axturbprofile = axes('Position',[0.325 0.05 0.2 0.45],'Parent',FMetDisplay);
+hturbprofile = [];
+lstringturbprofile = {};
+
+% temperature profile
+axtempprofile = axes('Position',[0.55 0.05 0.2 0.45],'Parent',FMetDisplay);
+htempprofile = [];
+lstringtempprofile = {};
+
+% direction
+axdirections = axes('Position',[0.775 0.05 0.2 0.45],'Parent',FMetDisplay);
+hdirections = [];
+lstringdirections = {};
+
+% Reynolds Stresses
+axfluxes = axes('Position',[0.1 0.6 0.2 0.35],'Parent',FMetDisplay);
+hfluxes = [];
+lstringfluxes = {};
+
+% length scales
+axlengthprofile = axes('Position',[0.325 0.6 0.2 0.35],'Parent',FMetDisplay);
+hlengthprofile = [];
+lstringlengthprofile = {};
+
+% precipitation
+axprecip = axes('Position',[0.6 0.6 0.15 0.1],'Parent',FMetDisplay);
+%hprecip = [];
+%lstringprecip = {};
+
+% hodograph
+axhodo = axes('Position',[0.775 0.6 0.2 0.35],'Parent',FMetDisplay);
+hhodo = [];
+lstringhodo = {};
+
+% vertical limit
+zmax = 150;
+
+%% %%%%%%%%%%%%%%%%%%%
+% CUP VELOCITY PROFILE
+%%%%%%%%%%%%%%%%%%%%%%
+if ~isempty(tower.veldirpairs)
+    for i = 1:numel(tower.veldirpairs(:,1))
+        plot(axvelprofile,...
+            qcd.veldirpairs{i}.CupSpeed.value,...
+            qcd.veldirpairs{i}.height,...
+            'ko',...
+            'MarkerEdgeColor',QC_color(qcd.veldirpairs{i}.flags),...
+            'MarkerFaceColor',QC_color(qcd.veldirpairs{i}.flags))
+        hold(axvelprofile,'on')
+            end
+    % plot a dummy point
+    hvelprofile(end+1) = plot(axvelprofile,...
+        NaN,0,'ko','LineWidth',0.5,'MarkerFaceColor',[0 0 0]);
+    lstringvelprofile{end+1} = 'Cup';
+end
+
+%% %%%%%%%%%%%%%%%%%%
+% CUP TURBULENCE DATA
+%%%%%%%%%%%%%%%%%%%%%
+if ~isempty(tower.veldirpairs)
+    for i = 1:numel(tower.veldirpairs(:,1))
+        plot(axturbprofile,...
+            qcd.veldirpairs{i}.CupTi.value,...
+            qcd.veldirpairs{i}.height,...
+            'ko',...
+            'MarkerEdgeColor',QC_color(qcd.veldirpairs{i}.flags),...
+            'MarkerFaceColor',QC_color(qcd.veldirpairs{i}.flags))
+        hold(axturbprofile,'on')
+    end
+    
+    % plot a dummy point
+    hturbprofile(end+1) = plot(axturbprofile,...
+        NaN,0,'ko','LineWidth',0.5,'MarkerFaceColor',[0 0 0]);
+    lstringturbprofile{end+1} = 'Cup';
+end
+
+%% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% SONIC ANEMOMETER VELOCITY PROFILES
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+if ~isempty(tower.sonicpairs)
+    for i = 1:numel(tower.sonicpairs(:,1))
+        plot(axvelprofile,...
+            qcd.sonicpairs{i}.CupEqHorizSpeed.value,...
+            qcd.sonicpairs{i}.height,...
+            'k^',...
+            'MarkerEdgeColor',QC_color(qcd.sonicpairs{i}.flags),...
+            'MarkerFaceColor',QC_color(qcd.sonicpairs{i}.flags))
+        hold(axvelprofile,'on')
+
+    end
+    
+    % plot a dummy point
+    hvelprofile(end+1) = plot(axvelprofile,...
+        NaN,0,'k^','LineWidth',0.5,'MarkerFaceColor',[0 0 0]);
+    lstringvelprofile{end+1} = 'Sonic';
+end
+
+%% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% SONIC ANEMOMETER TURBULENCE PROFILES
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+if ~isempty(tower.sonicpairs)
+    for i = 1:numel(tower.sonicpairs(:,1))
+        plot(axturbprofile,...
+            qcd.sonicpairs{i}.CupEqHorizTi.value,...
+            qcd.sonicpairs{i}.height,...
+            'k^',...
+            'MarkerEdgeColor',QC_color(qcd.sonicpairs{i}.flags),...
+            'MarkerFaceColor',QC_color(qcd.sonicpairs{i}.flags))
+        hold(axturbprofile,'on')
+    end
+    
+    % plot a dummy point
+    hturbprofile(end+1) = plot(axturbprofile,...
+        NaN,0,'k^','LineWidth',0.5,'MarkerFaceColor',[0 0 0]);
+    lstringturbprofile{end+1} = 'Sonic';
+end
+
+%% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% SONIC ANEMOMETER LENGTH SCALE PROFILES
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+max_lambda = 0;
+if ~isempty(tower.sonicpairs)
+    for i = 1:numel(tower.sonicpairs(:,1))
+        % plot u length scale
+        plot(axlengthprofile,...
+            qcd.sonicpairs{i}.L_zc_u.value,...
+            qcd.sonicpairs{i}.height,...
+            'ks',...
+            'MarkerFaceColor',QC_color(qcd.sonicpairs{i}.flags))
+        hold(axlengthprofile,'on')
+        max_u = max(zmax,qcd.sonicpairs{i}.L_zc_u.value);
+        % plot w length scale
+        plot(axlengthprofile,...
+            qcd.sonicpairs{i}.L_zc_w.value,...
+            qcd.sonicpairs{i}.height,...
+            'k^',...
+            'MarkerFaceColor',QC_color(qcd.sonicpairs{i}.flags))
+        max_w = max(zmax,qcd.sonicpairs{i}.L_zc_w.value);
+        % figure out the maximum length scale
+        max_lambda = max([max_lambda max_u max_w]);
+    end
+    
+    % add dummy u data
+    hlengthprofile(end+1) = plot(axlengthprofile,...
+        NaN,0,...
+        'ks','LineWidth',0.5,...
+        'MarkerFaceColor',[0 0 0]);
+    lstringlengthprofile{end+1} = 'u';
+    % add dummy w data
+    hlengthprofile(end+1) = plot(axlengthprofile,...
+        NaN,0,...
+        'k^','LineWidth',0.5,...
+        'MarkerFaceColor',[0 0 0]);
+    lstringlengthprofile{end+1} = 'w';
+end
+
+% add a 1:1 line
+plot(axlengthprofile,...
+    [0 zmax],[0 zmax],'k--');
+text(zmax,zmax, '\Lambda = z','FontSize',4,'Parent',axlengthprofile);
+
+%% %%%%%%%%%%%%%%%%%%%%%%
+% RAW TEMPERATURE PROFILE
+%%%%%%%%%%%%%%%%%%%%%%%%%
+tmin = 5;
+tmax = -5;
+hold(axtempprofile,'on')
+
+if ~isempty(tower.thermodynamics.AT)
+    for i = 1:numel(tower.thermodynamics.AT)
+        % get the channel id
+        di = tower.thermodynamics.AT(i);
+        if ~isnan(di)
+            plot(axtempprofile,...
+                qcd.datastream{di}.statistics.mean,...
+                datastream{di}.config.height,...
+                'ko',...
+                'MarkerEdgeColor',QC_color(qcd.datastream{di}.flags),...
+                'MarkerFaceColor',QC_color(qcd.datastream{di}.flags))
+            hold(axtempprofile,'on')
+            if isempty(qcd.datastream{di}.flags)
+                tmin = min([tmin qcd.datastream{di}.statistics.mean]);
+                tmax = max([tmax qcd.datastream{di}.statistics.mean]);
+            end
+        end
+    end
+end
+% plot a dummy point
+htempprofile(end+1) = plot(axtempprofile,...
+    NaN,0,'ko','LineWidth',0.5,...
+    'MarkerFaceColor',[0 0 0]);
+lstringtempprofile{end+1} = 'RTD';
+
+
+%% %%%%%%%%%%%%%%%%%%%%%%%%
+% DELTA TEMPERATURE PROFILE
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+for i = 1:numel(qcd.thermodynamics)
+    plot(axtempprofile,...
+        qcd.thermodynamics{i}.T.value-273.15,...
+        qcd.thermodynamics{i}.height,...
+        'k^',...
+        'MarkerEdgeColor',QC_color(qcd.thermodynamics{i}.T.flags),...
+        'MarkerFaceColor',QC_color(qcd.thermodynamics{i}.T.flags))
+    hold(axtempprofile,'on')
+    if isempty(qcd.thermodynamics{i}.T.flags)
+        tmin = min([tmin qcd.thermodynamics{i}.T.value-273.15]);
+        tmax = max([tmax qcd.thermodynamics{i}.T.value-273.15]);
+    end
+end
+
+% plot a dummy point
+htempprofile(end+1) = plot(axtempprofile,...
+    NaN,NaN,'k^','LineWidth',0.5,...
+    'MarkerFaceColor',[0 0 0]);
+lstringtempprofile{end+1} = '\DeltaT';
+
+%% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% POTENTIAL TEMPERATURE PROFILES
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+if 0	% turned off, 11/11/12
+    for i = 1:numel(qcd.thermodynamics)
+        plot(axtempprofile,...
+            qcd.thermodynamics{i}.PT.value-273.15,...
+            qcd.thermodynamics{i}.height,...
+            'kd',...
+            'MarkerFaceColor',QC_color(qcd.thermodynamics{i}.PT.flags))
+        hold(axtempprofile,'on')
+        if isempty(qcd.thermodynamics{i}.PT.flags)
+            tmin = min([tmin qcd.thermodynamics{i}.PT.value-273.15]);
+            tmax = max([tmax qcd.thermodynamics{i}.PT.value-273.15]);
+        end
+    end
+    
+    % plot the data
+    htempprofile(end+1) = plot(axtempprofile,...
+        NaN,NaN,'kd','LineWidth',0.5,...
+        'MarkerFaceColor',[0 0 0]);
+    lstringtempprofile{end+1} = '\theta';
+end
+
+%% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% DEW PT TEMPERATURE PROFILES
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+for i = 1:numel(qcd.thermodynamics)
+    plot(axtempprofile,...
+        qcd.thermodynamics{i}.DPT.value-273.15,...
+        qcd.thermodynamics{i}.height,...
+        'ks',...
+        'MarkerEdgeColor',QC_color(qcd.thermodynamics{i}.DPT.flags),...
+        'MarkerFaceColor',QC_color(qcd.thermodynamics{i}.DPT.flags))
+    hold(axtempprofile,'on')
+    if isempty(qcd.thermodynamics{i}.DPT.flags)
+        tmin = min([tmin qcd.thermodynamics{i}.DPT.value-273.15]);
+        tmax = max([tmax qcd.thermodynamics{i}.DPT.value-273.15]);
+    end
+end
+
+% plot the data
+htempprofile(end+1) = plot(axtempprofile,...
+    NaN,NaN,'ks','LineWidth',0.5,...
+    'MarkerFaceColor',[0 0 0]);
+lstringtempprofile{end+1} = 'Dew pt.';
+
+%% %%%%%%%
+% FOG RISK
+%%%%%%%%%%
+xlims = [2*floor(tmin/2) 2*ceil(tmax/2)];
+ntemps = numel(lstringtempprofile);
+for i = 1:numel(tower.thermodynamics.Fogrisk)
+    if tower.thermodynamics.Fogrisk(i) == 1
+        zfog = tower.thermodynamics.z(i);
+        htempprofile(ntemps+1) = patch([xlims(1) xlims(2) xlims(2) xlims(1)],...
+            [max(0,zfog-5) max(0,zfog-5) zfog+5 zfog+5],...
+            [-1 -1 -1 -1],...
+            [0.8 0.8 0.8]);
+        set(htempprofile(ntemps+1),...
+            'EdgeColor',[0.8 0.8 0.8],...
+            'Parent',axtempprofile);
+        lstringtempprofile{ntemps+1} = 'Risk of fog';
+        if (qcd.thermodynamics{i}.T.value-273.15) < 0
+            htempprofile(ntemps+2) = patch([xlims(1) xlims(2) xlims(2)],...
+                [max(0,zfog-5) max(0,zfog-5) zfog+5 ],...
+                [-0.5 -0.5 -0.5],...
+                [0.5 0.5 1]);
+            set(htempprofile(ntemps+2),...
+                'EdgeColor',[0.5 0.5 1],...
+                'Parent',axtempprofile);
+            lstringtempprofile{ntemps+2} = 'Risk of icing';
+        end
+    end
+end
+if all(isnan(xlims))
+    xlim(axtempprofile,[-5 5])
+else
+    xlim(axtempprofile,[min(xlims) max(xlims)])
+end
+
+%% %%%%%%%%%%%%%%%%%
+% CUP WIND DIRECTION
+%%%%%%%%%%%%%%%%%%%%
+% direction profile
+if ~isempty(tower.veldirpairs)
+    for i = 1:numel(tower.veldirpairs(:,1))
+        if ~isnan(qcd.veldirpairs{i}.direction.value)
+            plot(axdirections,...
+                qcd.veldirpairs{i}.direction.value,...
+                qcd.veldirpairs{i}.height,'ko',...
+                'MarkerEdgeColor',QC_color(qcd.veldirpairs{i}.flags),...
+                'MarkerFaceColor',QC_color(qcd.veldirpairs{i}.flags))
+            hold(axdirections,'on')
+        end
+    end
+    
+    % plot dummy data
+    hdirections(end+1) = plot(axdirections,...
+        NaN,NaN,'ko','LineWidth',0.5,...
+        'MarkerFaceColor',[0 0 0]);
+    lstringdirections{end+1} = 'Vane';
+end
+
+%% %%%%%%%%%%%%%%%%%%%
+% SONIC WIND DIRECTION
+%%%%%%%%%%%%%%%%%%%%%%
+% direction profile
+if ~isempty(tower.sonicpairs)
+    for i = 1:numel(tower.sonicpairs(:,1))
+        plot(axdirections,...
+            qcd.sonicpairs{i}.direction.value,...
+            qcd.sonicpairs{i}.height,...
+            'k^',...
+            'MarkerEdgeColor',QC_color(qcd.sonicpairs{i}.flags),...
+            'MarkerFaceColor',QC_color(qcd.sonicpairs{i}.flags))
+        hold(axdirections,'on')
+    end
+    % plot the data
+    hdirections(end+1) = plot(axdirections,...
+        NaN,NaN,'k^','LineWidth',0.5,...
+        'MarkerFaceColor',[0 0 0]);
+    lstringdirections{end+1} = 'Sonic';
+    
+end
+legend(axdirections,...
+    hdirections,lstringdirections)
+
+%% %%%%%%%%%%%
+% SONIC FLUXES
+%%%%%%%%%%%%%%
+if ~isempty(tower.sonicpairs)
+    if all(isnan(tower.thermodynamics.airdensity))
+        % then we don't have shear or heat flux
+        for i = 1:numel(tower.sonicpairs(:,1))
+            plot(axfluxes,...
+                qcd.sonicpairs{i}.ustar.value,...
+                qcd.sonicpairs{i}.height,...
+                'ks',...
+                'MarkerEdgeColor',QC_color(qcd.sonicpairs{i}.flags),...
+                'MarkerFaceColor',QC_color(qcd.sonicpairs{i}.flags))
+            hold(axfluxes,'on')
+            
+            plot(axfluxes,...
+                qcd.sonicpairs{i}.wT_mean.value,...
+                qcd.sonicpairs{i}.height,...
+                'k^',...
+                'MarkerEdgeColor',QC_color(qcd.sonicpairs{i}.flags),...
+                'MarkerFaceColor',QC_color(qcd.sonicpairs{i}.flags))
+        end
+        % plot fluxes and shear
+        lstringfluxes{end+1} = 'u_* [m s^{-1}]';
+        lstringfluxes{end+1} = '<w''T''> [m s^{-1}K]';
+    else
+        for i = 1:numel(tower.sonicpairs(:,1))
+            % density at this height
+            rho = interp1(tower.thermodynamics.z,...
+                tower.thermodynamics.airdensity,...
+                qcd.sonicpairs{i}.height);
+            % momentum flux
+            plot(axfluxes,...
+                qcd.sonicpairs{i}.momentumflux.value,...
+                qcd.sonicpairs{i}.height,...
+                'ks',...
+                'MarkerEdgeColor',QC_color(qcd.sonicpairs{i}.flags),...
+                'MarkerFaceColor',QC_color(qcd.sonicpairs{i}.flags))
+            hold(axfluxes,'on')
+            % heat flux (in hW)
+            plot(axfluxes,...
+                qcd.sonicpairs{i}.heatflux.value/100,...
+                qcd.sonicpairs{i}.height,...
+                'k^',...
+                'MarkerEdgeColor',QC_color(qcd.sonicpairs{i}.flags),...
+                'MarkerFaceColor',QC_color(qcd.sonicpairs{i}.flags))
+        end
+        % plot fluxes and shear
+        lstringfluxes{end+1} = '\tau_* [Pa]';
+        lstringfluxes{end+1} = '\rho C_p <w''T''> [hW]';
+    end
+    
+    % plot dummy data
+    hfluxes(end+1) = plot(axfluxes,...
+        NaN,NaN,'ks','LineWidth',0.5,...
+        'MarkerFaceColor',[0 0 0]);
+    hold(axfluxes,'on')
+    hfluxes(end+1) = plot(axfluxes,...
+        NaN,NaN,'k^','LineWidth',0.5,...
+        'MarkerFaceColor',[0 0 0]);
+end
+
+
+%% %%%%%%%%
+% HODOGRAPH
+%%%%%%%%%%%
+r = [];
+dir_d = [];
+dir_b = [];
+z = [];
+clr = [];
+src = [];
+
+% start by looking for cup / vane pairs
+if ~isempty(tower.veldirpairs)
+    for i = 1:numel(tower.veldirpairs(:,1))
+        if ~isnan(qcd.veldirpairs{i}.CupSpeed.value) & ~isnan(qcd.veldirpairs{i}.direction.value)
+            r(end+1) = qcd.veldirpairs{i}.CupSpeed.value;
+            dir_d(end+1) = qcd.veldirpairs{i}.direction.value;
+            % height
+            z(end+1) = qcd.veldirpairs{i}.height;
+            % boom direction
+            dir_b(end+1) = datastream{tower.veldirpairs(i,1)}.config.inflow;
+            % colour
+            clr(end+1,:) = QC_color(qcd.veldirpairs{i}.flags);
+            % source
+            src(end+1) = 'c';
+        end
+    end
+end
+
+% get sonics
+if ~isempty(tower.sonicpairs)
+    for i = 1:numel(tower.sonicpairs(:,1))
+        if ~isnan(qcd.sonicpairs{i}.CupEqHorizSpeed.value) & ~isnan(qcd.sonicpairs{i}.direction.value)
+            r(end+1) = qcd.sonicpairs{i}.CupEqHorizSpeed.value;
+            dir_d(end+1) = qcd.sonicpairs{i}.direction.value;
+            % height
+            z(end+1) = qcd.sonicpairs{i}.height;
+            % boom direction
+            dir_b(end+1) = datastream{tower.sonicpairs(i,1)}.config.inflow;
+            % colour
+            clr(end+1,:) = QC_color(qcd.sonicpairs{i}.flags);
+            % source
+            src(end+1) = 's';
+        end
+    end
+end
+
+% sort by height
+[z,zi] = sort(z,'ascend');
+r = r(zi);
+dir_d = dir_d(zi);
+dir_b = dir_b(zi);
+clr = clr(zi,:);
+src = src(zi);
+
+% convert degrees to radians
+dir_d = dir_d.*pi/180;
+dir_b = dir_b.*pi/180;
+
+% figure out the size of the hodograph
+max_r = max([ceil(max(r)) 3]);
+% create the hodograph
+create_hodograph(axhodo,max_r)
+hold(axhodo,'on')
+
+% add dummy vectors for legends
+% cups
+hhodo(1) = plot(axhodo,NaN,NaN,'ko--');
+set(hhodo(1),'MarkerFaceColor',[0 0 0]);
+lstringhodo{1} = 'Cups / vanes';
+% sonics
+hhodo(2) = plot(axhodo,pol2cart(NaN,NaN),'k^--');
+set(hhodo(2),'MarkerFaceColor',[0 0 0]);
+lstringhodo{2} = 'Sonics';
+
+% plot data
+% cups
+ci = find((src == 'c'));
+% plot the line
+if ~isempty(ci)
+    [x,y] = pol2cart(dir_d(ci),r(ci));
+    hc = plot(axhodo,x,y,'k--');
+    set(hc,'linewidth',0.5);
+    % add the markers
+    for i=1:numel(ci)
+        hcm(i) = plot(axhodo,...
+            x(i),y(i),'ko');
+        set(hcm(i),...
+            'MarkerEdgeColor',clr(ci(i),:),...
+            'MarkerFaceColor',clr(ci(i),:))
+    end
+end
+
+% sonics
+si = find((src == 's'));
+% plot the line
+if ~isempty(si)
+    [x,y] =pol2cart(dir_d(si),r(si));
+    hs = plot(axhodo,x,y,'k--');
+    set(hs,'linewidth',0.5);
+    % add the markers
+    for i=1:numel(si)
+        hsm(i) = plot(axhodo,...
+            x(i),y(i),'k^');
+        set(hsm(i),...
+            'MarkerFaceColor',clr(si(i),:),...
+            'MarkerFaceColor',clr(si(i),:))
+    end
+end
+
+% booms
+r_b = max(max_r,1)/3;
+
+ii = numel(hhodo)+1;
+for i=1:numel(dir_b)
+    if ~isnan(dir_b(i))
+        [x,y] = pol2cart([dir_b(i) dir_b(i)],[0 r_b]);
+        hhodo(3) = plot(axhodo,...
+            x,y,'b-');
+        set(hhodo(3),'Linewidth',2)
+        lstringhodo{3} = 'Booms';
+    end
+end
+
+%% %%%%%%%%%%%%
+% PRECIPITATION
+%%%%%%%%%%%%%%%
+
+
+% figure out the data channel that the precip data belongs
+if ~isempty(tower.precipsensor)
+    precip = qcd.datastream{tower.precipsensor}.data.val;
+else
+    precip = NaN*ones(10);
+end
+
+hist(axprecip,precip,[0:0.5:3]);
+h = findobj(axprecip,'Type','patch');
+if ~isempty(h) & ~isempty(tower.precipsensor)
+    set(h,'FaceColor',QC_color(qcd.datastream{tower.precipsensor}.flags),'EdgeColor',[0 0 0])
+end
+xlim(axprecip,[-0.5 3.5])
+set(axprecip,'XTick',[0 3])
+set(axprecip,'XTickLabel',{'Heavy';'None'})
+xlabel(axprecip,'Intensity [-]')
+ylabel(axprecip,'Count [-]')
+
+%% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% TURBINE LAYER RICHARDSON NUMBER
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% scan though the Richardson number pairs and figure out top-bottom
+Ri_zmax = 0;
+Ri_zmin = inf;
+Ri_S_TL = NaN;
+if ~isempty(tower.richardsonpairs)
+    for i = 1:numel(tower.richardsonpairs(:,1))
+        Ri_zmax= max(Ri_zmax,max(qcd.richardsonpairs{i}.height));
+        Ri_zmin= min(Ri_zmin,min(qcd.richardsonpairs{i}.height));
+    end
+    
+    for i = 1:numel(tower.richardsonpairs(:,1))
+        if all(ismember([Ri_zmin Ri_zmax],qcd.richardsonpairs{i}.height))
+            if isempty(qcd.richardsonpairs{i}.flags)
+                Ri_S_TL = qcd.richardsonpairs{i}.Ri_WS.value;
+            else
+                Ri_S_TL = NaN;
+            end
+        end
+    end
+end
+
+%% labels and legend
+ymax = 10*ceil(zmax*1.2)/10;
+
+%axes(axvelprofile);
+title(axvelprofile,'Wind Speed')
+ylabel(axvelprofile,'Height [m]')
+xlabel(axvelprofile,'Speed [m/s]')
+ylims = [0 ymax];
+ylim(axvelprofile,ylims)
+xlim(axvelprofile,[0 max(xlim(axvelprofile))])
+grid(axvelprofile,'on')
+legend(axvelprofile,hvelprofile,lstringvelprofile,'location','North','Color','w')
+pretty_xyplot(axvelprofile)
+
+%axes(axturbprofile);
+title(axturbprofile,'Turbulence')
+set(axturbprofile,'YTickLabel','')
+ylim(axturbprofile,ylims)
+xlim(axturbprofile,[0 max(xlim(axturbprofile))])
+grid(axturbprofile,'on')
+xlabel(axturbprofile,'Ti [%]')
+legend(axturbprofile,hturbprofile,lstringturbprofile,'location','North','Color','w')
+pretty_xyplot(axturbprofile)
+
+%axes(axtempprofile);
+title(axtempprofile,'Air Temperature')
+set(axtempprofile,'YTickLabel','')
+grid(axtempprofile,'on')
+ylim(axtempprofile,ylims)
+xlabel(axtempprofile,'Temperature [C]')
+legend(axtempprofile,htempprofile,lstringtempprofile,'location','North','Color','w')
+pretty_xyplot(axtempprofile)
+
+%axes(axdirections)
+title(axdirections,'Wind Direction')
+set(axdirections,'YTickLabel','')
+grid(axdirections,'on')
+ylim(axdirections,ylims)
+lims = xlim(axdirections);
+xlim(axdirections,[10*floor(max([0 min(lims)])/10) 10*ceil(min([360 max(lims)])/10)])
+xlabel(axdirections,'Direction [^\circ]')
+legend(axdirections,hdirections,lstringdirections,'location','North','Color','w')
+pretty_xyplot(axdirections)
+
+% fluxes
+%axes(axfluxes)
+if ~isnan(Ri_S_TL)
+    title(axfluxes,['Fluxes, Ri_{S(TL)} = ' num2str(Ri_S_TL,'%3.2f')])
+else
+    title(axfluxes,'Fluxes')
+end
+ylabel(axfluxes,'Height [m]')
+xlabel(axfluxes,'Flux')
+ylim(axfluxes,ylims)
+grid(axfluxes,'on')
+legend(axfluxes,hfluxes,lstringfluxes,'location','North','Color','w')
+pretty_xyplot(axfluxes)
+
+% length scales
+% axes(axlengthprofile)
+title(axlengthprofile,'Integral Length Scale')
+set(axlengthprofile,'YTickLabel','')
+xlabel(axlengthprofile,'\Lambda [m]')
+ylim(axlengthprofile,ylims)
+grid(axlengthprofile,'on')
+xlim(axlengthprofile,[0 max_lambda])
+legend(axlengthprofile,hlengthprofile,lstringlengthprofile,'location','North','Color','w')
+pretty_xyplot(axlengthprofile)
+
+% Hodograph
+set(axhodo,'FontSize',6)
+set(get(axhodo,'Title'),'Visible','on')
+title(axhodo,'Wind speed and direction')
+legend(axhodo,hhodo,lstringhodo,'location','SouthWest','Color','w')
+
+% Precipitation
+title(axprecip,'Precipitation')
+set(axprecip,'XDir','Reverse')
+pretty_xyplot(axprecip)
+
+
+%% -----------------
+% FUNCTION: QC_color
+% ------------------
+
+function clr = QC_color(QC_flags)
+
+if sum(QC_flags > 5000) >=1
+    clr = [1 0.2 0.2];
+elseif sum(QC_flags > 1000) >=1
+    clr = [0.8 0.8 0.8];
+else
+    clr = [0 0 0];
+end
+
+%% ------------------------
+% FUNCTION: Create_hodograph
+% --------------------------
+function create_hodograph(ax,max_r)
+% figure out the range bars
+ring_dr = floor(min(diff(linspace(0,max_r,3))));
+nrings = ceil(max_r/ring_dr);
+
+% set up the axes
+axis(ax,[-1 1 -1 1]*ring_dr*nrings)
+set(ax,'DataAspectRatio',[1 1 1])
+hold(ax,'on')
+
+for i = 1:nrings
+    ring_r = i*ring_dr;
+    [xring,yring] = pol2cart(0:pi/90:2*pi,ring_r);
+    % plot the circles to show speed
+    hp = patch(xring,yring,-1*(i+1)*ones(size(xring)),[1 1 1]);
+    
+    % find points outside the ring at 15-degree intervals
+    CrcPts = 0:pi/12:2*pi;
+    [x,y] = pol2cart(CrcPts,ring_r+0.25*ring_dr);
+    % add a text label
+    text(x(4),y(4),-1*(i+1),...
+        num2str(ring_r),...
+        'Parent',ax)
+    
+    % now generate the rings
+    if i < nrings
+        % inner lines have dotted edges
+        set(hp,...
+        'LineStyle','--',...
+        'Parent',ax)        
+    else
+        % outer line is solid
+        set(hp,...
+        'LineStyle','-',...
+        'Parent',ax)
+        % outer line has text labels
+        for t = 1:2:(numel(CrcPts)-2)
+            [th,r] = cart2pol(x(t),y(t));
+            [xt,yt] = pol2cart(th,r*1.1);            
+            text(xt,yt,-1*(i+1),...
+                num2str(floor(CrcPts(t)./(2*pi)*360)),...
+                'HorizontalAlignment','Center',...
+                'VerticalAlignment','Middle',...
+                'Parent',ax)
+            plot(ax,[0 x(t)],[0 y(t)],...
+                'k--')
+        end        
+    end
+end
+
+% set the axes orientation
+set(ax,'Visible','off')
+set(ax,'CameraUpVector',[1 0 0])
+set(ax,'Ydir','reverse')
+

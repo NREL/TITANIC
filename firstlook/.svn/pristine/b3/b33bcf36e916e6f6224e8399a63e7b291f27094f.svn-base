@@ -1,0 +1,65 @@
+6 & Sonic x velocity & Raw\_Sonic\_x\_130 & 131\\
+7 & Sonic y velocity & Raw\_Sonic\_y\_130 & 131\\
+8 & Sonic z velocity & Raw\_Sonic\_z\_130 & 131\\
+9 & Sonic temperature & Raw\_Sonic\_Temp\_130 & 131\\
+10 & Sonic x velocity & Raw\_Sonic\_x\_100 & 100\\
+11 & Sonic y velocity & Raw\_Sonic\_y\_100 & 100\\
+12 & Sonic z velocity & Raw\_Sonic\_z\_100 & 100\\
+13 & Sonic temperature & Raw\_Sonic\_Temp\_100 & 100\\
+14 & Sonic x velocity & Raw\_Sonic\_x\_74 & 76\\
+15 & Sonic y velocity & Raw\_Sonic\_y\_74 & 76\\
+16 & Sonic z velocity & Raw\_Sonic\_z\_74 & 76\\
+17 & Sonic temperature & Raw\_Sonic\_Temp\_74 & 76\\
+18 & Sonic x velocity & Raw\_Sonic\_x\_50 & 50\\
+19 & Sonic y velocity & Raw\_Sonic\_y\_50 & 50\\
+20 & Sonic z velocity & Raw\_Sonic\_z\_50 & 50\\
+21 & Sonic Temperature & Raw\_Sonic\_Temp\_50 & 50\\
+22 & Sonic x velocity & Raw\_Sonic\_x\_30 & 30\\
+23 & Sonic y velocity & Raw\_Sonic\_y\_30 & 30\\
+24 & Sonic z velocity & Raw\_Sonic\_z\_30 & 30\\
+25 & Sonic temperature & Raw\_Sonic\_temp\_30 & 30\\
+26 & Sonic x velocity & Raw\_Sonic\_x\_15 & 15\\
+27 & Sonic y velocity & Raw\_Sonic\_y\_15 & 15\\
+28 & Sonic z velocity & Raw\_Sonic\_z\_15 & 15\\
+29 & Sonic temperature & Raw\_Sonic\_Temp\_15 & 15\\
+30 & Air temperature & Raw\_Air\_Temp\_88m & 88\\
+31 & Air temperature & Raw\_Air\_Temp\_26m & 26\\
+32 & Air temperature & Raw\_Air\_Temp\_3m & 3\\
+33 & Dewpoint temperature & Raw\_Dewpt\_Temp\_134m & 134\\
+34 & Dewpoint temperature & Raw\_Dewpt\_Temp\_88m & 88\\
+35 & Dewpoint temperature & Raw\_Dewpt\_Temp\_26m & 26\\
+36 & Dewpoint temperature & Raw\_Dewpt\_Temp\_3m & 3\\
+37 & \Delta T & Raw\_DeltaT\_134\_88m & 134\\
+38 & \Delta T & Raw\_DeltaT\_88\_26m & 26\\
+39 & \Delta T & Raw\_DeltaT\_26\_3m & 3\\
+40 & Vane wind direction & Raw\_Vane\_WD\_134m & 134\\
+41 & Vane wind direction & Raw\_Vane\_WD\_88m & 88\\
+42 & Vane wind direction & Raw\_Vane\_WD\_26m & 26\\
+43 & Vane wind direction & Raw\_Vane\_WD\_10m & 10\\
+44 & Vane wind direction & Raw\_Vane\_WD\_3m & 3\\
+45 & Acceleration in x & Raw\_Accel\_x\_130 & 131\\
+46 & Acceleration in y & Raw\_Accel\_y\_130 & 131\\
+47 & Acceleration in z & Raw\_Accel\_z\_130 & 131\\
+48 & Acceleration in x & Raw\_Accel\_x\_100 & 100\\
+49 & Acceleration in y & Raw\_Accel\_y\_100 & 100\\
+50 & Acceleration in z & Raw\_Accel\_z\_100 & 100\\
+51 & Acceleration in x & Raw\_Accel\_x\_74 & 76\\
+52 & Acceleration in y & Raw\_Accel\_74\_y & 76\\
+53 & Acceleration in z & Raw\_Accel\_z\_74 & 76\\
+54 & Acceleration in x & Raw\_Accel\_x\_50 & 50\\
+55 & Acceleration in y & Raw\_Accel\_y\_50 & 50\\
+56 & Acceleration in z & Raw\_Accel\_z\_50 & 50\\
+57 & Acceleration in x & Raw\_Accel\_x\_30 & 30\\
+58 & Acceleration in y & Raw\_Accel\_y\_30 & 30\\
+59 & Acceleration in z & Raw\_Accel\_z\_30 & 30\\
+60 & Acceleration in x & Raw\_Accel\_x\_15 & 15\\
+61 & Acceleration in y & Raw\_Accel\_y\_15 & 15\\
+62 & Acceleration in z & Raw\_Accel\_z\_15 & 15\\
+63 & Station Pressure & Raw\_Baro\_Presr\_3m & 3\\
+64 & Precipitation intensity & Raw\_PRECIP\_INTEN & 0\\
+65 & Cup wind speed & Raw\_Cup\_WS\_134m & 134\\
+66 & Cup wind speed & Raw\_Cup\_WS\_88m & 88\\
+67 & Cup wind speed & Raw\_Cup\_WS\_80m & 80\\
+68 & Cup wind speed & Raw\_Cup\_WS\_26m & 26\\
+69 & Cup wind speed & Raw\_Cup\_WS\_10m & 10\\
+70 & Cup wind speed & Raw\_Cup\_WS\_3m & 3\\

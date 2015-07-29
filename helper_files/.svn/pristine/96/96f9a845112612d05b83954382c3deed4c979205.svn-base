@@ -1,0 +1,124 @@
+function data_convert_summarydata_to_ASCII(all_data,ExPath,ExFilename)
+
+%% export data
+
+% figure out how many data fields we have
+myfields = fieldnames(all_data);
+% remove raw data
+exportfields = {};
+fxi = [];
+for fi =1:numel(myfields)
+	if strfind(myfields{fi},'Raw_') | strfind(myfields{fi},'_NaN')
+	elseif  isfield(all_data.(myfields{fi}),'flags')
+		exportfields{end+1} = myfields{fi};
+		fxi(end+1) = fi;
+	end
+end
+nxf = numel(exportfields);
+nrecs = numel(all_data.(exportfields{1}).val);
+% create empty output fields
+X = zeros(nrecs,0);
+
+% export the date
+dcol = datestr(all_data.(myfields{fxi(1)}).date,'dd-mm-yyyy HH:MM:SS');
+
+% export the version
+Ver = all_data.version.val;
+
+% run through each field
+Labels = {};
+Variables = {};
+Units = {};
+for fi = 1:nxf
+	if isfield(all_data.(exportfields{fi}),'label')
+		% field name is fxi{fi}
+		ThisField = all_data.(exportfields{fi}).label;
+		% get the header
+		Variables{end+1} = exportfields{fi};
+		Labels{end+1} = ThisField;
+		% get the units
+		Units{end+1} = all_data.(exportfields{fi}).units;
+		% get the data
+		X(:,end+1) = all_data.(exportfields{fi}).val;
+		
+		% look to see if there is a QC field associated with this data
+		if isfield(all_data.(exportfields{fi}),'flags')
+			Variables{end+1} = [exportfields{fi} '.flags'];
+			Labels{end+1} = [ThisField '_QC'];
+			Units{end+1} = 'fail/flag/pass';
+			% export quality indicator
+			QCcode = zeros(nrecs,1);
+			[ipass,iflag,ifail] = flagstopassflagfail(all_data.(exportfields{fi}).flags);
+			QCcode(ipass) = 1;
+			QCcode(iflag) = 0;
+			QCcode(ifail) = -1;
+			X(:,end+1) = QCcode;
+		end
+	end
+end
+
+%% export the data
+% create the format string
+fstring = '%s, %d,';
+for fi = 1:nxf-1
+    fstring = [fstring ' %f, %d,'];
+end
+fstring = [fstring ' %f, %d'];
+
+if ~isdir(ExPath)
+	mkdir(ExPath)
+end
+% open a file
+fo = fopen(fullfile(ExPath,ExFilename),'w');
+
+% write the header
+fprintf(fo,'Date, record, version,');
+for hi  = 1:numel(Labels)
+    % clean up the header text
+    LX = [strrep(Labels{hi},',','_') ','];
+    LX = strrep(LX,'\','');
+    LX = strrep(LX,'/','div');
+    LX = strrep(LX,'-','to');
+    %HX = strrep(HX,' (','_');
+    %HX = strrep(HX,') ','_');    
+    %HX = strrep(HX,'(','_');
+    %HX = strrep(HX,'),',',');    
+    %HX = strrep(HX,')','');
+    %HX = strrep(HX,'''','');
+    %HX = strrep(HX,' ','_');    
+    fprintf(fo,' %s',LX);
+end
+fprintf(fo,'\r\n');
+
+% write the variable name
+fprintf(fo,'-- , -- , -- ,');
+for hi  = 1:numel(Variables)
+    % clean up the variables text
+    VX = [strrep(Variables{hi},',','_') ','];
+    VX = strrep(VX,'\','');
+    VX = strrep(VX,'/','div');
+    VX = strrep(VX,'-','to');
+    %HX = strrep(HX,' (','_');
+    %HX = strrep(HX,') ','_');    
+    %HX = strrep(HX,'(','_');
+    %HX = strrep(HX,'),',',');    
+    %HX = strrep(HX,')','');
+    %HX = strrep(HX,'''','');
+    %HX = strrep(HX,' ','_');    
+    fprintf(fo,' %s',VX);
+end
+fprintf(fo,'\r\n');
+
+% write the units
+fprintf(fo,'dd-mm-yyyy HH:MM:SS, ID, Code version,');
+for hi  = 1:numel(Units)
+    fprintf(fo,', %s',Units{hi});
+end
+fprintf(fo,'\r\n');
+
+% write the data
+for ri = 1:nrecs
+    Xs = sprintf(fstring,dcol(ri,:),ri,Ver(ri),X(ri,:));
+    fprintf(fo,'%s\r\n',Xs);
+end
+fclose(fo);

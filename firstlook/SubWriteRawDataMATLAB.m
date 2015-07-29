@@ -1,0 +1,56 @@
+function SubWriteRawDataMATLAB(tower,datastream,raw_data,timestamp,...
+    output_path,output_file)
+
+%% empty variables, labels, data and attributes
+VAL = {};
+VNAME ={};
+VLABEL= {};
+UNITS = {};
+DATE = {};
+HEIGHT = {};
+
+%% individual channel statistics
+
+for di = 1:size(raw_data,2)
+    if (di<=numel(datastream))
+        if ~isempty(datastream{di})
+            % check to see if we want this data            
+            if datastream{di}.qc.doqc
+                vname_sub = datastream{di}.instrument.variable;
+                vlabel_sub = datastream{di}.instrument.name;
+                z = datastream{di}.config.height;
+                % and the data
+                VAL{end+1} = raw_data(:,di);
+                VNAME{end+1} = vname_sub;
+                VLABEL{end+1} = [vlabel_sub ' (' num2str(z) ' m)'];
+                UNITS{end+1} = datastream{di}.instrument.units;
+                HEIGHT{end+1} = datastream{di}.config.height;
+            end
+        end
+    end
+end
+
+% time
+VAL{end+1} = timestamp;
+VNAME{end+1} = 'time_UTC';
+VLABEL{end+1} = 'Time (UTC)';
+UNITS{end+1} = 'Matlab datenum';
+HEIGHT{end+1} = 0;
+
+%% export the data
+for vi = 1:numel(VNAME)
+    % make a new variable
+    data_out.(VNAME{vi}).val = VAL{vi};    
+    data_out.(VNAME{vi}).label = VLABEL{vi};
+    data_out.(VNAME{vi}).units = UNITS{vi};
+    data_out.(VNAME{vi}).height = HEIGHT{vi};    
+end
+
+%% save tower information
+data_out.tower = tower;
+
+%% save configuration information
+data_out.datastream = datastream;
+
+%% and write it out
+save(fullfile(output_path,output_file),'-struct','data_out')

@@ -1,0 +1,103 @@
+%% TowerExportMonthlyData.m
+%
+% function to write one-month blocks of data to windweb
+%
+% INPUTS
+% ------
+% from_date date vector of
+%
+
+function TowerExportMonthlyData(varargin)
+
+%% create default values
+tnow = datevec(now);
+dt = [0 1 0 0 0 0];
+% get the default starting time (this month)
+from_date = tnow;
+from_date(3) = 1;
+from_date(4:end) = 0;
+% get the default end time
+to_date = tnow;
+% turn this into a structure
+options = struct('from_date',from_date,...
+    'to_date',to_date,...
+    'data_location','Y:\Wind\Confidential\Projects\MetData\M4Twr',...
+    'export_path','Y:\Wind\WindWeb\MetData\135mData\M4Twr');
+
+%% check inputs
+%# read the acceptable names
+optionNames = fieldnames(options);
+
+%# count arguments
+nArgs = length(varargin);
+if round(nArgs/2)~=nArgs/2
+    error('Export_Monthly_Data.m needs propertyName/propertyValue pairs')
+end
+
+for pair = reshape(varargin,2,[]) %# pair is {propName;propValue}
+    disp(pair)
+    inpName = lower(pair{1}); %# make case insensitive
+    if any(strmatch(inpName,optionNames))        
+        if isdeployed
+            switch pair{1}
+                case {'from_date';'to_date'}
+                    mystr = ['options.' inpName ' = str2num(' pair{2} ');']
+                    eval(mystr);
+                otherwise
+                    options.(inpName) = pair{2};
+            end
+        else
+            options.(inpName) = pair{2};
+        end
+    else
+        error('%s is not a recognized parameter name',inpName)
+    end
+end
+
+if isdeployed
+    options
+end
+
+%% write out the 10-minute average values to a text file
+% get the first day of the month
+t0 = floor(datenum(options.from_date));
+t0 = datevec(t0);
+t0(3) = 1;
+t0(4:6) = 0;
+t0 = datenum(t0);
+% now work through
+tstop = ceil(now);
+while t0 < tstop
+    % get the last day of the month
+    t1 = datevec(t0);
+    t1(2) = t1(2) +1;
+    t1(3) = 0;
+    t1(4) = 24;
+    t1(5:6) = 0;
+    t1 = datenum(t1);
+    % display time interval to screen
+    fprintf(1,'Looking for data from %s to %s.\n',...
+        datestr(t0,'yyyy\\mm\\dd HH:MM'), datestr(t1,'yyyy\\mm\\dd HH:MM'));
+        
+    % get the data
+    all_data = TowerFind10minDataMATLAB(...
+        'data_root',options.data_location,...
+        'from_date',datevec(t0),...
+        'to_date',datevec(t1));
+    % save matlab data
+    mkdir(fullfile(options.export_path,'10min','mat'));
+    save(fullfile(options.export_path,'10min','mat',...
+        datestr(t0,'yyyy_mmmm')),...
+        'all_data','t0','t1');
+    % convert matlab to text
+    TowerConvert10minDataToASCII(all_data,...
+        fullfile(options.export_path,'10min','txt'),...
+        datestr(t0,'yyyy_mmmm.txt'))
+    
+    % increment the time interval
+    t0 = datevec(t0);
+    t0(2) = t0(2)+1;
+    t0(3) = 1;
+    t0(4:6) = 0;
+    t0 = datenum(t0);
+end

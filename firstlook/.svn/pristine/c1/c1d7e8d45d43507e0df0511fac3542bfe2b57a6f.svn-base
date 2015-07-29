@@ -1,0 +1,41 @@
+clear all
+close all
+
+%% set paths
+addpath(genpath('../helper_files'))
+
+%% define a path for a specific period of time
+if ismac
+    data_path = '/Volumes/Confidential/Projects/MetData/M4Twr/2013/04';
+    log_path = '/Volumes/Confidential/Projects/MetData/M4Twr/QCReports';
+elseif ispc
+    data_path = 'Y:\wind\Confidential\Projects\MetData\M4Twr\2012\05';
+    log_path = 'Y:\wind\Confidential\Projects\MetData\M4Twr\QCReports';    
+end
+
+%log_path = '~/Documents/projects/M4/local_data_for_test';
+
+%% to run today, use
+[from_date,to_date,data_path] = MainTowerOperational;       
+
+%% M5
+[from_date,to_date,data_path] = MainTowerOperational('tower','M5');
+
+%% get the most recent data
+all_data = TowerFind10minDataMATLAB('data_root','Y:\Wind\Confidential\Projects\MetData\M5Twr',...
+    'tower','M5',...
+    'from_date',datevec(now-7),...
+	'to_date',datevec(now));
+
+%% run a selected window
+MainTowerOperational(...
+    'tower','M4',...
+    'from_date',[2012 10 12 0 0 0],...
+    'to_date',[2012 10 12 1 0 0],...
+    'data_path','/Volumes/Confidential/Projects/MetData/M4Twr/2012/10',...
+    'config_path','/Users/aclifton/Documents/projects/Met135Analysis_Local/firstlook/',...
+    'outage_file','M4_outages.mat',...
+    'log_file','M4_log_interactive.txt',...
+    'log_path',log_path,...
+    'DEBUG',0)
+

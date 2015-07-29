@@ -1,0 +1,164 @@
+function all_data = TowerConcatenateDatafiles(data_path,data_file)
+
+try
+    first_file = 1;
+    % generate basic structure
+    if iscell(data_path) % then load lots of files
+        % get the number of files
+        nfiles = numel(data_path);
+        % get the file index
+        fi = 1;
+        
+        for f= 1:numel(data_path)
+            if exist(fullfile(data_path{f},data_file{f}),'file')
+                % check to see if this is the first file we loaded
+                if fi == 1
+                    try
+                        % create an empty output
+                        data_in = WaitYourTurnToLoad(fullfile(data_path{f},data_file{f}));
+                        data_fields_in = fieldnames(data_in);
+                        first_file = 0;
+                        data_structure_fields = {};
+                        % check the version
+                        if isfield(data_in,'processing')
+                            if isfield(data_in.processing,'code')
+                                if isfield(data_in.processing.code,'version')
+                                    V1 = data_in.processing.code.version;
+                                else
+                                    V1 = NaN;
+                                end
+                            else
+                                V1 = NaN;
+                            end
+                        else
+                            V1 = NaN;
+                        end
+                        data_struc.version.val(1) = V1;
+                        % scan through each field and generate an empty cell or
+                        % vector with the right number of cells in it
+                        for i = 1:numel(data_fields_in)
+                            if isstruct(data_in.(data_fields_in{i}))
+                                subfields = fieldnames(data_in.(data_fields_in{i}));
+                                if isfield(data_in.(data_fields_in{i}),'val') & ...
+                                        isfield(data_in.(data_fields_in{i}),'npoints') & ...
+                                        isfield(data_in.(data_fields_in{i}),'date') & ...
+                                        isfield(data_in.(data_fields_in{i}),'flags')
+                                    % then we have a data field
+                                    
+                                    % label
+                                    data_struc.(data_fields_in{i}).label = data_in.(data_fields_in{i}).label;
+                                    % units
+                                    data_struc.(data_fields_in{i}).units = data_in.(data_fields_in{i}).units;
+                                    % height
+                                    data_struc.(data_fields_in{i}).height = data_in.(data_fields_in{i}).height;
+                                    
+                                    
+                                    %% get data
+                                    % value
+                                    data_struc.(data_fields_in{i}).val = NaN * ones(1,nfiles);
+                                    data_struc.(data_fields_in{i}).val(1)= ...
+                                        data_in.(data_fields_in{i}).val;
+                                    % npoints
+                                    data_struc.(data_fields_in{i}).npoints = NaN * ones(1,nfiles);
+                                    if isstruct(data_in.(data_fields_in{i}).npoints)
+                                        data_struc.(data_fields_in{i}).npoints(1) = ...
+                                            data_in.(data_fields_in{i}).npoints.ninlimit;
+                                    else
+                                        data_struc.(data_fields_in{i}).npoints(1) = ...
+                                            data_in.(data_fields_in{i}).npoints;
+                                    end
+                                    % date
+                                    data_struc.(data_fields_in{i}).date = NaN * ones(1,nfiles);
+                                    data_struc.(data_fields_in{i}).date(1) = ...
+                                        data_in.(data_fields_in{i}).date;
+                                    % flags
+                                    data_struc.(data_fields_in{i}).flags = cell(1,nfiles);
+                                    data_struc.(data_fields_in{i}).flags{1} = ...
+                                        cell2mat(data_in.(data_fields_in{i}).flags);
+                                    
+                                    % and save this as a data structure name
+                                    data_structure_fields{end+1} = data_fields_in{i};
+                                end
+                                % then it wasn't a data field
+                            end
+                        end
+                        disp(['Loaded file first file ' data_file{f}])
+                    catch
+                        disp(['Error loading first file ' data_file{f} '; skipping this file.'])
+                    end
+                elseif fi > 1
+                    try
+                        % load another file and use the existing structure
+                        data_new = WaitYourTurnToLoad(fullfile(data_path{f},data_file{f}));
+                        % check the version
+                        if isfield(data_in,'processing')
+                            if isfield(data_in.processing,'code')
+                                if isfield(data_in.processing.code,'version')
+                                    V2 = data_in.processing.code.version;
+                                else
+                                    V2 = NaN;
+                                end
+                            else
+                                V2 = NaN;
+                            end
+                        else
+                            V2 = NaN;
+                        end
+                        if V2 ~= V1
+                            fprintf('Code versions change here from %f to %f!\n',V1,V2)
+                            break
+                        end
+                        data_struc.version.val(fi) = V2;
+                        % now slot this data in to the structure we've put together
+                        for i = 1:numel(data_structure_fields)
+                            if isstruct(data_new.(data_structure_fields{i}))
+                                subfields = fieldnames(data_struc.(data_structure_fields{i}));
+                                if isfield(data_new.(data_structure_fields{i}),'val') & ...
+                                        isfield(data_new.(data_structure_fields{i}),'npoints') & ...
+                                        isfield(data_new.(data_structure_fields{i}),'date') & ...
+                                        isfield(data_new.(data_structure_fields{i}),'flags')
+                                    % value
+                                    data_struc.(data_structure_fields{i}).val(fi)= ...
+                                        data_new.(data_structure_fields{i}).val;
+                                    % npoints
+                                    if isstruct(data_new.(data_structure_fields{i}).npoints)
+                                        data_struc.(data_structure_fields{i}).npoints(fi) = ...
+                                            data_new.(data_structure_fields{i}).npoints.ninlimit;
+                                    else
+                                        data_struc.(data_structure_fields{i}).npoints(fi) = ...
+                                            data_new.(data_structure_fields{i}).npoints;
+                                    end
+                                    % date
+                                    data_struc.(data_structure_fields{i}).date(fi) = ...
+                                        data_new.(data_structure_fields{i}).date;
+                                    % flags
+                                    data_struc.(data_structure_fields{i}).flags{fi} = ...
+                                        cell2mat(data_new.(data_structure_fields{i}).flags);
+                                end
+                            end
+                        end
+                        disp(['Loaded file ' data_file{f}])
+                    catch
+                        disp(['Error loading file ' data_file{f} '; skipping this file.'])
+                    end
+                end
+                % increment the file index
+                fi = fi+ 1;
+            end
+        end
+    else
+        % just load a single file
+        data_struc = WaitYourTurnToLoad(fullfile(data_path,data_file));
+        data_struc.version.val = data_in.processing.code.version;
+        data_fields = fieldnames(data_struc);
+    end
+catch exception
+    disp('Error!')
+end
+
+% and tidy up a bit
+if exist('data_struc','var')
+    all_data = data_struc;
+else
+    all_data = [];
+end

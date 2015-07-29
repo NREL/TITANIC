@@ -1,0 +1,347 @@
+% function f = windrose(mag,dir,velres,dirres)
+%
+% This function generates a wind rose showing wind direction and strength.
+% Data is split into directional bins and shown as a percentage of the
+% total wind vector, and is also resolved by wind speed.
+%
+% INPUTS
+% ------
+%
+% OPTIONAL INPUTS
+% ---------------
+% magmax        maximum allowed value on the plot
+% threshold     lowest value to be used (shown data + thresholded data =100%)
+% rlimit        limit to the radial extent (percentage [0 - 100])
+% backgroundcolor   Background colour for the plot
+% colormap      colormap to be used (default is jet)
+% style         Valid values are 'compass'
+% legend        Valid values are 'on';
+%
+% written by Andy Clifton, March 2008.
+
+function f = windrose(mag,dir,velres,dirres,varargin)
+
+%% define defaults
+options = struct(...
+    'rlimit',[],...
+    'magmax',max(mag),...
+    'magmin', 0,...
+    'threshold',[],...
+    'bgc','w',...           % colour of the circle that we'll use
+    'cmapname','jet',...    % colourmap that we'll use
+    'cbrewer',{''},...
+    'grid','on',...         % add grids at 45 and 90 degrees
+    'percentage','on',...
+    'style','compass',...
+    'title','',...
+    'legend','off',...
+    'legendlabel','');
+
+%# read the acceptable names
+optionNames = fieldnames(options);
+
+%# count arguments
+nArgs = length(varargin);
+if round(nArgs/2)~=nArgs/2
+    error('plot_xyz_patches needs propertyName/propertyValue pairs')
+end
+
+for pair = reshape(varargin,2,[]) %# pair is {propName;propValue}
+    inpName = lower(pair{1}); %# make case insensitive
+    
+    if any(strmatch(inpName,optionNames))
+        %# overwrite options. If you want you can test for the right class here
+        %# Also, if you find out that there is an option you keep getting wrong,
+        %# you can use "if strcmp(inpName,'problemOption'),testMore,end"-statements
+        options.(inpName) = pair{2};
+    else
+        error('%s is not a recognized parameter name',inpName)
+    end
+end
+
+if ~isempty(options.threshold)
+    options.magmin = options.threshold;
+end
+
+%% start by tidying up the inputs
+mag(mag < options.magmin) = NaN;
+% turn them into columns
+mag = reshape(mag,1,numel(mag));
+dir = reshape(dir,1,numel(dir));
+nsamples = length(mag);
+
+% get the percentage that are thresholded out
+pnullpc = 100*numel(find(isnan(mag))) /nsamples;
+
+%% then we need to correct the angular resolution
+ndir = ceil(360/dirres);
+dirres = 360 / ndir;
+dirvec = 0:dirres:360-dirres;
+%disp(['Using angular resolution of ' num2str(dirres) ' degrees'])
+
+%% bin the velocity
+% now deal with the velocity bins
+% number of velocity bins
+nv = ceil(options.magmax/velres);
+% check to see if the maximum velocity is higher than the cutoff
+if max(mag) > options.magmax
+    nv = nv+1;
+end
+% work out which bin our velocities are in
+% e.g. 2.4 m/s with a resolution of 2 m/s belongs in bin 2
+vbinmax = velres:velres:velres*ceil(options.magmax/velres);
+vbinmin = vbinmax - velres;
+binv = zeros(size(mag));
+for i = 1:numel(vbinmax)
+    binv((mag<vbinmax(i))&(mag>=vbinmin(i))) = i;
+end
+
+%% check for data over the maximum
+if max(mag) > options.magmax
+    i = numel(vbinmax) + 1;
+    binv(mag>options.magmax) = i;
+end
+
+%% bin the direction. 1 is the bin over north.
+bind = 1+get_wind_sector(dir, dirres);
+
+%% now we divide up our data by direction
+% now go through and find the data...
+for v = nv:-1:1
+    % rows are going to be velocity frequency
+    vi = find(binv == v);
+    for d = 1:ndir
+        % columns give direction
+        pd(v,d) = 100*length(find(bind(vi) == d)) / nsamples;
+    end
+    pd(v,isnan(pd(v)))= 0;
+end
+% get the radius of the circle we'll use
+if ~isempty(options.rlimit)
+    rb = 4* options.rlimit/3;
+else
+    rb = ceil(4*(4*ceil(max(sum(pd,1))/3)/4));
+end
+
+%% figure out the colormap
+
+switch options.cmapname
+    case 'cbrewer'
+        if max(mag) > options.magmax
+            vcolours = eval(['colormap(cbrewer(''' options.cbrewer{1} ''',''' options.cbrewer{2} ''',(nv-1)));']);
+            vcolours(end+1,:) = [0 0 0];
+        else
+            vcolours = eval(['colormap(cbrewer(''' options.cbrewer{1} ''',''' options.cbrewer{2} ''',(nv)));']);
+        end
+    otherwise
+        if max(mag) > options.magmax
+            vcolours = eval(['colormap(' options.cmapname '(nv-1));']);
+            vcolours(end+1,:) = [0 0 0];
+        else
+            vcolours = eval(['colormap(' options.cmapname '(nv));']);
+        end
+end
+%% now plot the result
+f = gcf;
+% draw the background circle
+x = rb.*cos((2*pi)*[0:360]/(360));
+y = rb.*sin((2*pi)*[0:360]/(360));
+switch options.bgc
+    case {'none'}
+        patch(x,y,'w','FaceColor','none','Edgecolor','none')
+    otherwise
+        patch(x,y,options.bgc)
+end
+hold on
+
+% and set up the axis
+set(gca,'DataAspectRatio',[1 1 1])
+%view(-90,90)
+xlim([-1.1*rb 1.4*rb])
+ylim([-1.1*rb 1.1*rb])
+set(gca,'Visible','off')
+
+% add the grid
+for i = 1:8
+    plot([rb/4*cos(i*pi/4) rb*cos(i*pi/4)],...
+        [rb/4*sin(i*pi/4) rb*sin(i*pi/4)],...
+        'k-',...
+        'Color',[0.8 0.8 0.8],...
+        'Tag','Grid')
+end
+for i = 2:3
+    % plot three concentric circles
+    plot(rb*i/4*cos(2*pi*[0:1:360]/360),...
+        rb*i/4*sin(2*pi*[0:1:360]/360),...
+        'k-',...
+        'Color',[0.8 0.8 0.8],...
+        'Tag','Grid')
+end
+
+%% now plot the data
+% send the raw direction and frequency to a fucntion that deals with
+% mapping geometric to geophysical _and_ plotting
+
+for v = nv:-1:1
+    h{v} = fpolar(dirvec,sum(pd(1:v,:),1)+rb/4,dirres,vcolours(v,:));
+end
+
+switch options.bgc
+    case {'none'}
+        fcircle(180,rb/4,360,'w');
+    otherwise
+        fcircle(180,rb/4,360,options.bgc);
+end
+
+
+%% generate the legend string
+lstring = {};
+for v = 1:1:nv
+    lstring{end+1} = num2str(velres*(v-1));
+end
+lstring{end+1} = num2str(velres*(v));
+if max(mag) > options.magmax
+    lstring{end} = num2str(max(mag),'%3.1f');
+end
+
+%% now check for extras to add to the plot
+switch lower(options.legend)
+    case 'on'
+        % create a legend lower left
+        % colours are given by vcolours
+        % legend entries are given by lstring
+        % constrain to rb
+        xmin = 1.3*rb;
+        dx = 0.1*rb;
+        ymax = 0.8*rb;
+        dy = 0.1*rb;
+        dyinter = 0;
+        for iv = 1:nv
+            y = ymax-(iv-1)*0.1*rb;
+            
+            
+            patch([xmin xmin+dx xmin+dx xmin],...
+                [y-dyinter y-dyinter y-dyinter-dy y-dyinter-dy],...
+                'w',...
+                'EdgeColor',vcolours(iv,:),...
+                'FaceColor',vcolours(iv,:))
+            text(xmin+2*dx,y-dyinter,lstring{iv},...
+                'VerticalAlignment','middle',...
+                'HorizontalAlignment','left','Tag','ColorBarAxesLabel')
+        end
+        % and then the final legend
+        iv = iv+1;
+        text(xmin+2*dx,y-dyinter-dy,lstring{iv},...
+            'VerticalAlignment','middle',...
+            'HorizontalAlignment','left','Tag','ColorBarAxesLabel')
+        
+        if ~isempty(options.legendlabel)
+            % add the label for the legend
+            text(xmin + dx, ymax + dy, ...
+                options.legendlabel,...
+                'VerticalAlignment','bottom',...
+                'HorizontalAlignment','right',...
+                'Tag','ColorBarAxesLabel')
+        end
+    case 'off'
+end
+
+switch lower(options.style)
+    case 'compass'
+        % add North label
+        text(rb*cos(pi/2),rb*sin(pi/2),'N',...
+            'VerticalAlignment','Bottom',...
+            'HorizontalAlignment','Center','Tag','ColorBarAxesLabel')
+        % add South label
+        text(rb*cos(3*pi/2),rb*sin(3*pi/2),'S',...
+            'VerticalAlignment','Top',...
+            'HorizontalAlignment','Center','Tag','ColorBarAxesLabel')
+        % add West label
+        text(rb*cos(pi),rb*sin(pi),'W ',...
+            'VerticalAlignment','Middle',...
+            'HorizontalAlignment','Right','Tag','ColorBarAxesLabel')
+        % add East label
+        text(rb*cos(0),rb*sin(0),' E',...
+            'VerticalAlignment','Middle',...
+            'HorizontalAlignment','Left','Tag','ColorBarAxesLabel')
+end
+
+switch lower(options.grid)
+    case {'on'}
+        set(findobj(gca,'Tag','Grid'),'Visible','on')
+    case {'off'}
+        set(findobj(gca,'Tag','Grid'),'Visible','off')
+end
+switch options.percentage
+    case 'on'
+        % labels on the outermost circle
+        text([rb*cos(2*pi*60/360)],...
+            [rb*sin(2*pi*60/360)],...
+            [num2str(3*rb/4,'%g') ' %'],...
+            'VerticalAlignment','bottom',...
+            'HorizontalAlignment','left',...
+            'Tag','AxesLabel')
+        % labels on the grid circles
+        for i =2:3
+            text(rb*i/4*cos(2*pi*60/360),...
+                [rb*i/4*sin(2*pi*60/360)],...
+                [num2str((i-1)*rb/4,'%3.2g') ' %'],...
+                'VerticalAlignment','bottom',...
+                'HorizontalAlignment','left',...
+                'Tag','AxesLabel')
+        end
+end
+
+if ~isempty(options.title)
+    text(-1.08*rb,1.1*rb,options.title,...
+        'VerticalAlignment','top',...
+        'HorizontalAlignment','Left','Tag','Title')
+end
+if ~isempty(options.threshold)
+    thresholdpc = 100*...
+        numel(find(isnan(mag') & ~isnan(dir'))) ...
+        /nsamples;
+    if thresholdpc > 0
+        text(0,0,...
+            {'Calm:'; [num2str(thresholdpc, '%3.1f' ) ' %' ]; ['<' num2str(options.magmin) 'm s^{-1}' ]},...
+            'VerticalAlignment','middle',...
+            'HorizontalAlignment','center','Tag','AxesLabel')
+    else
+        text(0,0,...
+            {'Calm:'; ' 0 %' ; ['<' num2str(options.magmin) 'm s^{-1}' ]},...
+            'VerticalAlignment','middle',...
+            'HorizontalAlignment','center','Tag','AxesLabel')
+    end
+end
+
+set(findobj(gca,'Tag','Grid'),'Color',[0.5 0.5 0.5])
+
+% and the end of the main function
+end
+
+% function to plot the segment. Inputs are direction and magnitude, both in
+% geophysical coordinates
+function h = fpolar(dir,mag,dirres,C)
+dirpolar = -dir+90;
+for i = 1:length(mag)
+    sec = dirpolar(i)-dirres/2:1:dirpolar(i)+dirres/2;
+    r = [0 mag(i)*ones(size(sec)) 0];
+    sec = 2*pi*[0 sec 0]/360;
+    h(i) = patch(r.*cos(sec),r.*sin(sec),C);
+    set(h(i),'Tag','Sector','EdgeColor','none')
+end
+end
+
+% function to plot an empty circle
+function h = fcircle(dir,mag,dirres,C)
+dirpolar = -dir+90;
+for i = 1:length(mag)
+    sec = dirpolar(i)-dirres/2:1:dirpolar(i)+dirres/2;
+    r = [mag(i)*ones(size(sec))];
+    sec = 2*pi*sec/360;
+    h(i) = patch(r.*cos(sec),r.*sin(sec),C);
+    set(h(i),'Tag','Calm')
+end
+end
+
+

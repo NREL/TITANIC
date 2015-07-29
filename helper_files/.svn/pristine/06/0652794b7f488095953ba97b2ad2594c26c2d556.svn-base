@@ -1,0 +1,61 @@
+function all_data = TowerFind10minDataMATLAB(varargin)
+
+optargin = size(varargin,2);
+switch optargin
+    case 0
+    otherwise
+        % there are optional arguments
+        for k= 1:2:size(varargin,2)
+            if isdeployed
+                switch varargin{k}
+                    case {'from_date';'to_date'}
+                        if isstr(varargin{k+1})
+                            eval([char(varargin{k}) '= str2num(varargin{' num2str(k+1) '});']);
+                        else
+                            eval([char(varargin{k}) '= varargin{' num2str(k+1) '};']);
+                        end
+                        DO_MOVE = 0;
+                    otherwise
+                        eval([char(varargin{k}) '= varargin{' num2str(k+1) '};']);
+                end
+            else
+                switch varargin{k}
+                    case {'from_date';'to_date'}
+                        DO_MOVE = 0;
+                end
+                if isnumeric(varargin{k+1})
+                    eval([char(varargin{k}) '= varargin{' num2str(k+1) '};']);
+                elseif ischar(varargin{k+1})
+                    eval([char(varargin{k}) '=''' char(varargin{k+1}) ''';']);
+                end
+                
+            end
+        end
+end
+
+%% find the data files
+data_path = {};
+data_file = {};
+ndays = max(ceil(datenum(to_date))- floor(datenum(from_date)),1);
+for d = 1:ndays
+    date = datenum(from_date)+(d-1);
+    mypath = fullfile(data_root,datestr(date,'yyyy/mm/dd'),'summary_data');
+    % get a list of data files in these directories
+    listing = dir(fullfile(mypath,[datestr(date,'mmdd'),'*.mat']));
+    if ~isempty(listing)
+        for i = 1:numel(listing)
+            filedatenum = TowerConvertDatafilenameDatenum(listing(i).name);
+            inrange = (filedatenum >= datenum(from_date)) ...
+                & ...
+                (filedatenum<= datenum(to_date));
+            if inrange
+                data_path{end+1} = mypath;
+                data_file{end+1} = listing(i).name;
+                disp(['Found ' data_file{end} ]);
+            end
+        end
+    end
+end
+
+%% load the data
+all_data = TowerConcatenateDatafiles(data_path,data_file);

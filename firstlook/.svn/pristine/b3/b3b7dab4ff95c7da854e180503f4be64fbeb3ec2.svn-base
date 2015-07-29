@@ -1,0 +1,22 @@
+% function [U,theta] = get_met_wind_direction(u,v)
+%
+% Convert meteorological u and v wind components, into a wind speed and
+% direction following the example given at 
+% http://mst.nerc.ac.uk/wind_vect_convs.html
+%
+% u is the component towards east (i.e. +ve values indicate westerlies)
+% v is the component towards north (i.e. +ve values indicate southerlies)
+%
+% U is the magnitude of the wind
+% theta is the direction the wind comes from
+
+function [U,theta] = get_met_wind_direction(u,v)
+
+% get the wind speed
+U = (u.^2 + v.^2).^(1/2);
+
+% get the direction
+theta = (180./pi).*atan2(-u,-v);
+
+% map negative values
+theta(theta<0) = 360 + theta(theta<0);

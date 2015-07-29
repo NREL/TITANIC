@@ -1,0 +1,127 @@
+function TowerConvert10minDataToASCII(all_data,ExPath,ExFilename)
+
+%% EXTRA HEADERS
+FileHeaders{1} = ['File written: ' datestr(now,'dd-mm-yyyy HH:MM:SS') ' (dd-mm-yyyy HH:MM:SS).'];
+FileHeaders{2} = 'Export code last updated: 08-02-2013 11:00:00 (dd-mm-yyyy HH:MM:SS).';
+FileHeaders{3} = 'Last update by Andy Clifton to fix file format.';
+
+%% ORGANIZE DATA
+% figure out how many data fields we have
+myfields = fieldnames(all_data);
+% remove raw data
+exportfields = {};
+fxi = [];
+for fi =1:numel(myfields)
+	if strfind(myfields{fi},'Raw_') | strfind(myfields{fi},'_NaN')
+	elseif  isfield(all_data.(myfields{fi}),'flags')
+		exportfields{end+1} = myfields{fi};
+		fxi(end+1) = fi;
+	end
+end
+nxf = numel(exportfields);
+nrecs = numel(all_data.(exportfields{1}).val);
+% create empty output fields
+X = zeros(nrecs,0);
+
+%% GATHER DATA FOR EXPORT
+% get the date
+dcol = datestr(all_data.(myfields{fxi(1)}).date,'dd-mm-yyyy HH:MM:SS');
+% get the version
+VerNo = all_data.version.val;
+% create a record number
+RecNo =  reshape(1:numel(VerNo),[],1);
+
+% create the format string. We know the first three columns (date, record,
+% version number) have the same format in every file
+fstring = '%s, %d, %3.3f';
+
+% run through each field
+Labels = {};
+Variables = {};
+Units = {};
+for fi = 1:nxf
+	if isfield(all_data.(exportfields{fi}),'label')
+		% get the header		
+		Labels{end+1} = all_data.(exportfields{fi}).label;
+        Variables{end+1} = exportfields{fi};
+		% get the units
+		Units{end+1} = all_data.(exportfields{fi}).units;
+		% get the data        
+		X(:,end+1) = all_data.(exportfields{fi}).val;
+        X(isnan(X(:,end)),end) = -999;
+		
+		% look to see if there is a QC field associated with this data
+		if isfield(all_data.(exportfields{fi}),'flags')
+			Labels{end+1} = [all_data.(exportfields{fi}).label '_QC'];
+            Variables{end+1} = [exportfields{fi} '.flags'];
+			Units{end+1} = 'fail [-1] /flag [0]/pass [1]';
+			% export quality indicator
+			QCcode = zeros(nrecs,1);
+			[ipass,iflag,ifail] = flagstopassflagfail(all_data.(exportfields{fi}).flags);
+			QCcode(ipass) = 1;
+			QCcode(iflag) = 0;
+			QCcode(ifail) = -1;
+			X(:,end+1) = QCcode;
+        end
+        
+        % create the format string                
+        if isfield(all_data.(exportfields{fi}),'flags')
+            fstring = [fstring ', %f, %d'];
+        else
+            fstring = [fstring ', %f'];
+        end
+	end
+end
+
+%% export the data
+
+if ~isdir(ExPath)
+	mkdir(ExPath)
+end
+% open a file
+fo = fopen(fullfile(ExPath,ExFilename),'w');
+
+% write the file header
+for hi  = 1:numel(FileHeaders)
+    fprintf(fo,'%s\r\n',FileHeaders{hi});
+end
+fprintf(fo,'\r\n');
+
+% write the data header
+fprintf(fo,'Date, record, version,');
+for hi  = 1:numel(Labels)
+    % clean up the headers so that we can use comma-delimited files    
+    LX = [SubCleanStr(Labels{hi}) ','];
+    fprintf(fo,'%s',LX);
+end
+fprintf(fo,'\r\n');
+
+% write the variable name
+fprintf(fo,'-- , -- , -- ,');
+for hi  = 1:numel(Variables)
+    % clean up the variable names so that we can use comma-delimited files    
+    VX = [SubCleanStr(Variables{hi}) ','];
+    fprintf(fo,'%s',VX);
+end
+fprintf(fo,'\r\n');
+
+% write the units
+fprintf(fo,'dd-mm-yyyy HH:MM:SS, ID, Code version,');
+for hi  = 1:numel(Units)    
+    UX = [SubCleanStr(Units{hi}) ','];
+    fprintf(fo,'%s',UX);
+end
+fprintf(fo,'\r\n');
+
+% write the data
+for ri = 1:nrecs
+    Xs = sprintf(fstring,dcol(ri,:),RecNo(ri),VerNo(ri),X(ri,:));
+    fprintf(fo,'%s\r\n',Xs);
+end
+fclose(fo);
+
+function MyStr = SubCleanStr(MyStr)
+MyStr = strrep(MyStr,'_',' ');
+MyStr = strrep(MyStr,'  ',' ');
+MyStr = strrep(MyStr,',','_');
+MyStr = strrep(MyStr,'__','_');

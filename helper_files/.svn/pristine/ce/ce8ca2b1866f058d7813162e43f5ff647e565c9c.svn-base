@@ -1,0 +1,111 @@
+% function all_data = TowerCopy20HzData(varargin)
+%
+% find 20 Hz tower data within a certain time-frame and write it to file.
+
+function [data_path,data_file] = TowerCopy20HzData(varargin)
+
+%% define default values
+% Need values for:
+% data_root
+% to_date
+% from_date
+% output_root
+if ispc
+    data_root = 'Y:\Wind\Confidential\Projects\Other\M4TWR\';
+elseif ismac
+    data_root = '/Volumes/Confidential/Projects/Other/M4TWR/';
+end
+to_date = now;
+from_date = now-2;
+
+%% now parse inputs
+optargin = size(varargin,2);
+switch optargin
+    case 0
+    otherwise
+        % there are optional arguments
+        for k= 1:2:size(varargin,2)
+            if isdeployed
+                switch varargin{k}
+                    case {'from_date';'to_date'}
+                        eval([char(varargin{k}) '= str2num(varargin{' num2str(k+1) '});']);
+                        DO_MOVE = 0;
+                    otherwise
+                        eval([char(varargin{k}) '= varargin{' num2str(k+1) '};']);
+                end
+            else
+                switch varargin{k}
+                    case {'from_date';'to_date'}
+                        DO_MOVE = 0;
+                end
+                if isnumeric(varargin{k+1})
+                    eval([char(varargin{k}) '= varargin{' num2str(k+1) '};']);
+                elseif ischar(varargin{k+1})
+                    eval([char(varargin{k}) '=''' char(varargin{k+1}) ''';']);
+                end
+            end
+        end
+end
+
+%% find the data files
+data_path = {};
+data_file = {};
+output_path = {};
+ndays = max(ceil(datenum(to_date))- floor(datenum(from_date)),1);
+for d = 1:ndays
+    date = datenum(from_date)+(d-1);
+    if ismac
+        myinpath = fullfile(data_root,datestr(date,'yyyy/mm/dd'),'raw_data');
+        myoutpath = fullfile(output_root,'20Hz','mat',...
+            datestr(date,'yyyy/mm/dd'));
+    elseif ispc
+        myinpath = fullfile(data_root,datestr(date,'yyyy\\mm\\dd'),'raw_data');
+        myoutpath = fullfile(output_root,'20Hz','mat',...
+            datestr(date,'yyyy\\mm\\dd'));
+    end
+    % get a list of data files in these directories
+    listing = dir(fullfile(myinpath,[datestr(date,'mmdd'),'*.mat']));
+    if ~isempty(listing)
+        for i = 1:numel(listing)
+            filedatenum = TowerConvertDatafilenameDatenum(listing(i).name);
+            inrange = (filedatenum >= datenum(from_date)) ...
+                & ...
+                (filedatenum<= datenum(to_date));
+            if inrange
+                data_path{end+1} = myinpath;
+                data_file{end+1} = listing(i).name;
+                output_path{end+1} = myoutpath;
+                disp(['Found ' data_file{end} ]);
+            end
+        end
+    end
+end
+
+
+%% ------------
+% RAW DATA COPY
+% -------------
+%data_path and data_file contain all of the file names
+for fi =1:numel(data_path)
+    try
+        % export the data as a text file
+        if isempty(output_path{fi})
+            error
+        end
+        if ~exist(output_path{fi},'dir')
+            mkdir(output_path{fi})
+        end
+        fromNameAndPath = fullfile(data_path{fi},data_file{fi});
+        
+        % first write the text file
+        toNameAndPath =  fullfile(output_path{fi},data_file{fi});
+        % overwrite existing data
+        if exist(toNameAndPath,'file')
+            delete(toNameAndPath)
+        end
+        % copy the file
+        copyfile(fromNameAndPath,toNameAndPath);
+        
+        disp(['copied ' data_file{fi} ' to ' output_path])
+    end
+end

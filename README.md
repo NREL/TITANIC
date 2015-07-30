@@ -6,20 +6,23 @@ This code analyses data obtained from a meteorological tower and extracts a rang
 
 #Requirements
 1. MATLAB.
-2. Patience.
 
 #Download
 Click on the "Download ZIP" button on the lower right of this page. 
 
-The following files are the important ones:
-* TowerRunAnalysis: read in a raw data file and analyse the data.
-* TowerPlotSummaryData: create summaries of data for arbitrary periods.
-* TowerDeleteCorruptData: check the web archive for damaged files
-* TowerExportMonthlyData: export summaries of data as .txt and matlab files to a web server
-* TowerCopy20HzData: copy the highest resolution data to the web server
-
 #Installing and using the scripts
-unpack the .zip file. Open `AdminCodeTester.m`. Change `C:\blah\` to be the path to the directory you just created. Then try the various cells. Each calls different scripts.
+1. unpack the .zip file. 
+2. Open `AdminCodeTester.m`. 
+3. Change `C:\blah\` to the path to the directory you just created. 
+4. Run the first few cells to set your paths.
+5. Try each cells in order. Each calls different scripts:
+* `TowerRunAnalysis.m`: read in a raw data file and analyse the data. Push results to file in the directory.
+* `TowerPlotSummaryData.m`: create summaries of data for arbitrary periods.
+* `TowerDeleteCorruptData.m`: check the web archive for damaged files
+* `TowerExportMonthlyData.m`: export summaries of data as .txt and matlab files to a web server
+* `TowerCopy20HzData.m`: copy the highest resolution data to the web server
+
+Scripts can be compiled and run from a Windows command line using the MATLAB MCR. 
 
 #Documentation
 You're reading it. See also comments in the code

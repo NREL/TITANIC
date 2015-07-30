@@ -14,6 +14,7 @@ Click on the "Download ZIP" button on the lower right of this page.
 1. Unpack the .zip file. You will find scripts, sample data, and a dummy directory structure representing local data and a web server.
 2. Open `AdminCodeTester.m`. 
 3. Change `C:\blah\` to the path to the directory you just created. 
+4. Add a directory at the root, called `webserver`. This will be your pseudo web output, corresponding to the archives at http://wind.nrel.gov/MetData/135mData/M5Twr/
 4. Run the first few cells to set your paths.
 5. Try each cells in order. Each calls different scripts:
   1. `TowerRunAnalysis.m`: read in a raw data file and analyse the data. Push results to file in the directory.

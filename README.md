@@ -31,7 +31,7 @@ You're reading it. See also comments in the code
 Please use the issue-tracker at https://github.com/NREL/TITANIC/issues to report issues.
 
 #Wiki
-Please use the wiki at https://github.com/NREL/TITANIC/wiki as you feel fit. Useful examples may be rolled in to the template file over time.
+Please use the wiki at https://github.com/NREL/TITANIC/wiki as you feel fit.
 
 #Code Maintainers
 * [Andy Clifton](mailto:andrew.clifton@nrel.gov) (National Renewable Energy Laboratory)

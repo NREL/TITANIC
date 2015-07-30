@@ -1,12 +1,12 @@
 # TITANIC
 Turbine Inflow Turbulence ANalysIs Code
 
-This code analyses data obtained from a meteorological tower and extracts a range of statistics and meteorological information. Data are also converted into a standard format and summarized graphically.
-
 #Introduction
+This code analyses data obtained from a meteorological tower and extracts a range of statistics and meteorological information. Data are also converted into a standard format and summarized graphically. For examples of the outputs, see https://nwtc.nrel.gov/M4 and https://nwtc.nrel.gov/M5.
 
 #Requirements
 1. MATLAB.
+2. Patience.
 
 #Download
 Click on the "Download ZIP" button on the lower right of this page. 

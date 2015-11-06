@@ -811,7 +811,7 @@ try
                 fprintf('\n')
                 % apply this calibration to the data
                 DAS_in = (raw_data(:,tower.calibrations{i}.channel) - tower.calibrations{i}.from.offset)./tower.calibrations{i}.from.gradient;
-                DAS_out = DAS_in .* tower.calibrations{i}.to.gradient + tower.calibrations{i}.to.gradient;
+                DAS_out = DAS_in .* tower.calibrations{i}.to.gradient + tower.calibrations{i}.to.offset;
                 % overwrite the raw data
                 raw_data(:,tower.calibrations{i}.channel) = DAS_out;
                 clear DAS_in DAS out

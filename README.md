@@ -6,18 +6,21 @@ This code analyses data obtained from a meteorological tower and extracts a rang
 
 #Requirements
 1. MATLAB.
+2. Sense of humor.
 
 #Download
 Click on the "Download ZIP" button on the lower right of this page. 
 
 #Installing and using the scripts
-1. Unpack the .zip file. You will find scripts, sample data, and a dummy directory structure representing local data and a web server.
-2. Open `AdminCodeTester.m`. 
-3. Change `C:\blah\` to the path to the directory you just created. 
-4. Add a directory at the root, called `webserver`. This will be your pseudo web output, corresponding to the archives at http://wind.nrel.gov/MetData/135mData/M5Twr/
-4. Run the first few cells to set your paths.
-5. Try each cells in order. Each calls different scripts:
-  1. `TowerRunAnalysis.m`: read in a raw data file and analyse the data. Push results to file in the directory.
+1. Unpack the .zip file. You will a directory structure as follows: 
+  1. `firstlook` and `helper_files` contain code.
+  2. `/local/MetData/M5Twr` contains raw test data.
+  3. `webserver` represents a web server. This will be your pseudo web output, corresponding to the archives at http://wind.nrel.gov/MetData/135mData/M5Twr/
+3. Open `AdminCodeTester.m`. 
+  1. Change `C:\blah\`, etc to the path to the directory you just created. 
+  2. Run the first few cells to set your paths.
+6. Try each cells in order. Each calls different scripts:
+  1. `TowerRunAnalysis.m`: read in a raw data file and analyse the data. Push results to file in the directory, and push files to the web.
   2. `TowerPlotSummaryData.m`: create summaries of data for arbitrary periods.
   3. `TowerDeleteCorruptData.m`: check the web archive for damaged files
   4. `TowerExportMonthlyData.m`: export summaries of data as .txt and matlab files to a web server
@@ -26,7 +29,7 @@ Click on the "Download ZIP" button on the lower right of this page.
 Scripts can be compiled and run from a Windows command line using the MATLAB MCR. 
 
 #Documentation
-You're reading it. See also comments in the code
+You're reading it. See also comments in the code.
 
 #Reporting issues and errors
 Please use the issue-tracker at https://github.com/NREL/TITANIC/issues to report issues.

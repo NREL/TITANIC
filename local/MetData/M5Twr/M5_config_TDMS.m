@@ -21,22 +21,11 @@
 % -----------
 tower.config.date = [2014 01 06 0 0 0]; % date the configuration file was last changed.
 
-%% --------
-% MAST INFO
-% ---------
-tower.name = 'M5';
-tower.id = '4.0';
-tower.baseheight= 1845; % height of base above sea level [m]
+	
 
-% time zone
-tower.UTCoffset = -7;   % offset local to UTC, not including daylight savings time
-tower.timezone = 'MST'; % local time zone
-
-% DAQ details
-tower.daq.freq.value(1) = 20;
-tower.daq.freq.fromdate(1,:) = [0 0 0 0 0 0]
-tower.daq.duration.value(1) = 10; 		% interval duration in minutes
-tower.daq.duration.fromdate(1,:) = [0 0 0 0 0 0];
+%% ----------
+% PROFILE INFO
+% ------------
 
 % wind speed / direction pairs are required to calculate mean wind
 % directions. Column 1 is the number of the datastream giving speed, column
@@ -139,7 +128,7 @@ datastream{6}.instrument.variable = 'Sonic_x_119';                  % variable n
 datastream{6}.instrument.TDMSchanName = '119m_U';
 datastream{6}.instrument.measures = 'velocity';             % measurement type
 datastream{6}.instrument.units ='m/s';                      % units (SI as far as possible)
-datastream{6}.instrument.nanvalue =-99999;                       % NaN value
+datastream{6}.qc.nanvalue =-99999;                       % NaN value
 
 datastream{6}.qc.doqc = 1;
 datastream{6}.qc.range.max = 35.05;              % maximum measurement value
@@ -165,7 +154,7 @@ datastream{7}.instrument.variable = 'Sonic_y_119';                  % variable n
 datastream{7}.instrument.TDMSchanName = '119m_V';
 datastream{7}.instrument.measures = 'velocity';             % measurement type
 datastream{7}.instrument.units ='m/s';                      % units (SI as far as possible)
-datastream{7}.instrument.nanvalue =-99999;                       % NaN value
+datastream{7}.qc.nanvalue =-99999;                       % NaN value
 
 datastream{7}.qc.doqc = 1;
 datastream{7}.qc.range.max = 35.05;              % maximum measurement value
@@ -191,7 +180,7 @@ datastream{8}.instrument.variable = 'Sonic_z_119';                  % variable n
 datastream{8}.instrument.TDMSchanName = '119m_W';
 datastream{8}.instrument.measures = 'velocity';             % measurement type
 datastream{8}.instrument.units ='m/s';                      % units (SI as far as possible)
-datastream{8}.instrument.nanvalue =100;                       % NaN value
+datastream{8}.qc.nanvalue =100;                       % NaN value
 
 datastream{8}.qc.doqc = 1;
 datastream{8}.qc.range.max = 29.95;              % maximum measurement value
@@ -217,7 +206,7 @@ datastream{9}.instrument.variable = 'Sonic_Temp_119';                  % variabl
 datastream{9}.instrument.TDMSchanName = '119m_T';
 datastream{9}.instrument.measures = 'temperature';             % measurement type
 datastream{9}.instrument.units =sprintf('%cC',char(176));            % units (SI as far as possible)
-datastream{9}.instrument.nanvalue =-99999;                       % NaN value
+datastream{9}.qc.nanvalue =-99999;                       % NaN value
 
 datastream{9}.qc.doqc = 1;
 datastream{9}.qc.range.max = +49.95;              % maximum measurement value
@@ -243,7 +232,7 @@ datastream{10}.instrument.variable = 'Sonic_x_100';                  % variable 
 datastream{10}.instrument.TDMSchanName = '100m_U';
 datastream{10}.instrument.measures = 'MEASTYPE';             % measurement type
 datastream{10}.instrument.units ='m/s';                       % units (SI as far as possible)
-datastream{10}.instrument.nanvalue =-99999;                       % NaN value
+datastream{10}.qc.nanvalue =-99999;                       % NaN value
 
 datastream{10}.qc.doqc = 1;
 datastream{10}.qc.range.max = 35.05;              % maximum measurement value
@@ -269,7 +258,7 @@ datastream{11}.instrument.variable = 'Sonic_y_100';                  % variable 
 datastream{11}.instrument.TDMSchanName = '100m_V';
 datastream{11}.instrument.measures = 'velocity';             % measurement type
 datastream{11}.instrument.units ='m/s';                       % units (SI as far as possible)
-datastream{11}.instrument.nanvalue =-99999;                       % NaN value
+datastream{11}.qc.nanvalue =-99999;                       % NaN value
 
 datastream{11}.qc.doqc = 1;
 datastream{11}.qc.range.max = 35.05;              % maximum measurement value
@@ -295,7 +284,7 @@ datastream{12}.instrument.variable = 'Sonic_z_100';                  % variable 
 datastream{12}.instrument.TDMSchanName = '100m_W';
 datastream{12}.instrument.measures = 'velocity';             % measurement type
 datastream{12}.instrument.units ='m/s';                       % units (SI as far as possible)
-datastream{12}.instrument.nanvalue =-99999;                       % NaN value
+datastream{12}.qc.nanvalue =-99999;                       % NaN value
 
 datastream{12}.qc.doqc = 1;
 datastream{12}.qc.range.max = 29.95;              % maximum measurement value
@@ -321,7 +310,7 @@ datastream{13}.instrument.variable = 'Sonic_Temp_100';                  % variab
 datastream{13}.instrument.TDMSchanName = '100m_T';
 datastream{13}.instrument.measures = 'temperature';             % measurement type
 datastream{13}.instrument.units =sprintf('%cC',char(176));          % units (SI as far as possible)
-datastream{13}.instrument.nanvalue =100;                       % NaN value
+datastream{13}.qc.nanvalue =100;                       % NaN value
 
 datastream{13}.qc.doqc = 1;
 datastream{13}.qc.range.max = +49.95;              % maximum measurement value
@@ -347,7 +336,7 @@ datastream{14}.instrument.variable = 'Sonic_x_74';                  % variable n
 datastream{14}.instrument.TDMSchanName = '74m_U';
 datastream{14}.instrument.measures = 'velocity';             % measurement type
 datastream{14}.instrument.units ='m/s';                      % units (SI as far as possible)
-datastream{14}.instrument.nanvalue =100;                       % NaN value
+datastream{14}.qc.nanvalue =100;                       % NaN value
 
 datastream{14}.qc.doqc = 1;
 datastream{14}.qc.range.max = 35.05;              % maximum measurement value
@@ -373,7 +362,7 @@ datastream{15}.instrument.variable = 'Sonic_y_74';                  % variable n
 datastream{15}.instrument.TDMSchanName = '74m_V';
 datastream{15}.instrument.measures = 'velocity';             % measurement type
 datastream{15}.instrument.units ='m/s';                      % units (SI as far as possible)
-datastream{15}.instrument.nanvalue =100;                       % NaN value
+datastream{15}.qc.nanvalue =100;                       % NaN value
 
 datastream{15}.qc.doqc = 1;
 datastream{15}.qc.range.max = 35.05;              % maximum measurement value
@@ -399,7 +388,7 @@ datastream{16}.instrument.variable = 'Sonic_z_74';                  % variable n
 datastream{16}.instrument.TDMSchanName = '74m_W';
 datastream{16}.instrument.measures = 'velocity';             % measurement type
 datastream{16}.instrument.units ='m/s';                      % units (SI as far as possible)
-datastream{16}.instrument.nanvalue =100;                       % NaN value
+datastream{16}.qc.nanvalue =100;                       % NaN value
 
 datastream{16}.qc.doqc = 1;
 datastream{16}.qc.range.max = 29.95;              % maximum measurement value
@@ -426,7 +415,7 @@ datastream{17}.instrument.TDMSchanName = '74m_T';
 
 datastream{17}.instrument.measures = 'temperature';             % measurement type
 datastream{17}.instrument.units =sprintf('%cC',char(176));         % units (SI as far as possible)
-datastream{17}.instrument.nanvalue =100;                       % NaN value
+datastream{17}.qc.nanvalue =100;                       % NaN value
 
 datastream{17}.qc.doqc = 1;
 datastream{17}.qc.range.max = +49.95;              % maximum measurement value
@@ -453,7 +442,7 @@ datastream{18}.instrument.TDMSchanName = '61m_U';
 
 datastream{18}.instrument.measures = 'velocity';             % measurement type
 datastream{18}.instrument.units ='m/s';                      % units (SI as far as possible)
-datastream{18}.instrument.nanvalue =100;                       % NaN value
+datastream{18}.qc.nanvalue =100;                       % NaN value
 
 datastream{18}.qc.doqc = 1;
 datastream{18}.qc.range.max = 35.05;              % maximum measurement value
@@ -479,7 +468,7 @@ datastream{19}.instrument.variable = 'Sonic_y_61';                  % variable n
 datastream{19}.instrument.TDMSchanName = '61m_V';
 datastream{19}.instrument.measures = 'velocity';             % measurement type
 datastream{19}.instrument.units ='m/s';                      % units (SI as far as possible)
-datastream{19}.instrument.nanvalue =100;                       % NaN value
+datastream{19}.qc.nanvalue =100;                       % NaN value
 
 datastream{19}.qc.doqc = 1;
 datastream{19}.qc.range.max = 35.05;              % maximum measurement value
@@ -505,7 +494,7 @@ datastream{20}.instrument.variable = 'Sonic_z_61';                  % variable n
 datastream{20}.instrument.TDMSchanName = '61m_W';
 datastream{20}.instrument.measures = 'velocity';             % measurement type
 datastream{20}.instrument.units ='m/s';                      % units (SI as far as possible)
-datastream{20}.instrument.nanvalue =100;                       % NaN value
+datastream{20}.qc.nanvalue =100;                       % NaN value
 
 datastream{20}.qc.doqc = 1;
 datastream{20}.qc.range.max = 29.95;              % maximum measurement value
@@ -531,7 +520,7 @@ datastream{21}.instrument.variable = 'Sonic_Temp_61';                  % variabl
 datastream{21}.instrument.TDMSchanName = '61m_T';
 datastream{21}.instrument.measures = 'temperature';             % measurement type
 datastream{21}.instrument.units = sprintf('%cC',char(176));             % units (SI as far as possible)
-datastream{21}.instrument.nanvalue =100;                       % NaN value
+datastream{21}.qc.nanvalue =100;                       % NaN value
 
 datastream{21}.qc.doqc = 1;
 datastream{21}.qc.range.max = +49.95;              % maximum measurement value
@@ -557,7 +546,7 @@ datastream{22}.instrument.variable = 'Sonic_x_41';                  % variable n
 datastream{22}.instrument.TDMSchanName = '41m_U';
 datastream{22}.instrument.measures = 'velocity';             % measurement type
 datastream{22}.instrument.units ='m/s';                       % units (SI as far as possible)
-datastream{22}.instrument.nanvalue =100;                       % NaN value
+datastream{22}.qc.nanvalue =100;                       % NaN value
 
 datastream{22}.qc.doqc = 1;
 datastream{22}.qc.range.max = 35.05;              % maximum measurement value
@@ -583,7 +572,7 @@ datastream{23}.instrument.variable = 'Sonic_y_41';                  % variable n
 datastream{23}.instrument.TDMSchanName = '41m_V';
 datastream{23}.instrument.measures = 'velocity';             % measurement type
 datastream{23}.instrument.units ='m/s';                       % units (SI as far as possible)
-datastream{23}.instrument.nanvalue =100;                       % NaN value
+datastream{23}.qc.nanvalue =100;                       % NaN value
 
 datastream{23}.qc.doqc = 1;
 datastream{23}.qc.range.max = 35.05;              % maximum measurement value
@@ -609,7 +598,7 @@ datastream{24}.instrument.variable = 'Sonic_z_41';                  % variable n
 datastream{24}.instrument.TDMSchanName = '41m_W';
 datastream{24}.instrument.measures = 'velocity';             % measurement type
 datastream{24}.instrument.units ='m/s';                       % units (SI as far as possible)
-datastream{24}.instrument.nanvalue =100;                       % NaN value
+datastream{24}.qc.nanvalue =100;                       % NaN value
 
 datastream{24}.qc.doqc = 1;
 datastream{24}.qc.range.max = 29.95;              % maximum measurement value
@@ -635,7 +624,7 @@ datastream{25}.instrument.variable = 'Sonic_Temp_41';                  % variabl
 datastream{25}.instrument.TDMSchanName = '41m_T';
 datastream{25}.instrument.measures = 'temperature';             % measurement type
 datastream{25}.instrument.units = sprintf('%cC',char(176));     % units (SI as far as possible)
-datastream{25}.instrument.nanvalue =100;                       % NaN value
+datastream{25}.qc.nanvalue =100;                       % NaN value
 
 datastream{25}.qc.doqc = 1;
 datastream{25}.qc.range.max = +49.95;              % maximum measurement value
@@ -661,7 +650,7 @@ datastream{26}.instrument.variable = 'Sonic_x_15';                  % variable n
 datastream{26}.instrument.TDMSchanName = '15m_U';
 datastream{26}.instrument.measures = 'velocity';             % measurement type
 datastream{26}.instrument.units ='m/s';                       % units (SI as far as possible)
-datastream{26}.instrument.nanvalue =100;                       % NaN value
+datastream{26}.qc.nanvalue =100;                       % NaN value
 
 datastream{26}.qc.doqc = 1;
 datastream{26}.qc.range.max = 35.05;              % maximum measurement value
@@ -687,7 +676,7 @@ datastream{27}.instrument.variable = 'Sonic_y_15';                  % variable n
 datastream{27}.instrument.TDMSchanName = '15m_V';
 datastream{27}.instrument.measures = 'velocity';             % measurement type
 datastream{27}.instrument.units ='m/s';                       % units (SI as far as possible)
-datastream{27}.instrument.nanvalue =100;                       % NaN value
+datastream{27}.qc.nanvalue =100;                       % NaN value
 
 datastream{27}.qc.doqc = 1;
 datastream{27}.qc.range.max = 35.05;              % maximum measurement value
@@ -713,7 +702,7 @@ datastream{28}.instrument.variable = 'Sonic_z_15';                  % variable n
 datastream{28}.instrument.TDMSchanName = '15m_W';
 datastream{28}.instrument.measures = 'velocity';             % measurement type
 datastream{28}.instrument.units ='m/s';                       % units (SI as far as possible)
-datastream{28}.instrument.nanvalue =100;                       % NaN value
+datastream{28}.qc.nanvalue =100;                       % NaN value
 
 datastream{28}.qc.doqc = 1;
 datastream{28}.qc.range.max = 29.95;              % maximum measurement value
@@ -739,7 +728,7 @@ datastream{29}.instrument.variable = 'Sonic_Temp_15';                  % variabl
 datastream{29}.instrument.TDMSchanName = '15m_T';
 datastream{29}.instrument.measures = 'temperature';             % measurement type
 datastream{29}.instrument.units = sprintf('%cC',char(176));            % units (SI as far as possible)
-datastream{29}.instrument.nanvalue = 100;                       % NaN value
+datastream{29}.qc.nanvalue = 100;                       % NaN value
 
 datastream{29}.qc.doqc = 1;
 datastream{29}.qc.range.max = +49.95;              % maximum measurement value
@@ -765,7 +754,7 @@ datastream{30}.instrument.variable = 'Air_Temp_87m';                  % variable
 datastream{30}.instrument.TDMSchanName = 'Air_Temp_87M';
 datastream{30}.instrument.measures = 'temperature';             % measurement type
 datastream{30}.instrument.units =sprintf('%cC',char(176));        % units (SI as far as possible)
-datastream{30}.instrument.nanvalue =-99999;                       % NaN value
+datastream{30}.qc.nanvalue =-99999;                       % NaN value
 datastream{30}.instrument.skipnsamples = 20;
 
 datastream{30}.qc.doqc = 1;
@@ -792,7 +781,7 @@ datastream{31}.instrument.variable = 'Air_Temp_38m';                  % variable
 datastream{31}.instrument.TDMSchanName = 'Air_Temp_38m';
 datastream{31}.instrument.measures = 'temperature';             % measurement type
 datastream{31}.instrument.units =sprintf('%cC',char(176));         % units (SI as far as possible)
-datastream{31}.instrument.nanvalue =-99999;                       % NaN value
+datastream{31}.qc.nanvalue =-99999;                       % NaN value
 datastream{31}.instrument.skipnsamples = 20;
 
 datastream{31}.qc.doqc = 1;
@@ -819,7 +808,7 @@ datastream{32}.instrument.variable = 'Air_Temp_3m';                  % variable 
 datastream{32}.instrument.TDMSchanName = 'Air_Temp_3m';
 datastream{32}.instrument.measures = 'temperature';             % measurement type
 datastream{32}.instrument.units = sprintf('%cC',char(176));         % units (SI as far as possible)
-datastream{32}.instrument.nanvalue =-99999;                       % NaN value
+datastream{32}.qc.nanvalue =-99999;                       % NaN value
 datastream{32}.instrument.skipnsamples = 20;
 
 datastream{32}.qc.doqc = 1;
@@ -846,7 +835,7 @@ datastream{33}.instrument.variable = 'Dewpt_Temp_122m';                  % varia
 datastream{33}.instrument.TDMSchanName = 'Dewpt_Temp_122m';
 datastream{33}.instrument.measures = 'MEASTYPE';             % measurement type
 datastream{33}.instrument.units =sprintf('%cC',char(176));                       % units (SI as far as possible)
-datastream{33}.instrument.nanvalue =-99999;                       % NaN value
+datastream{33}.qc.nanvalue =-99999;                       % NaN value
 datastream{33}.instrument.skipnsamples = 20;
 
 datastream{33}.qc.doqc = 1;
@@ -873,7 +862,7 @@ datastream{34}.instrument.variable = 'Dewpt_Temp_87m';                  % variab
 datastream{34}.instrument.TDMSchanName = 'Dewpt_Temp_87m';
 datastream{34}.instrument.measures = 'MEASTYPE';             % measurement type
 datastream{34}.instrument.units =sprintf('%cC',char(176));          % units (SI as far as possible)
-datastream{34}.instrument.nanvalue =-99999;                       % NaN value
+datastream{34}.qc.nanvalue =-99999;                       % NaN value
 datastream{34}.instrument.skipnsamples = 20;
 
 datastream{34}.qc.doqc = 1;
@@ -900,7 +889,7 @@ datastream{35}.instrument.variable = 'Dewpt_Temp_38m';                  % variab
 datastream{35}.instrument.TDMSchanName = 'Dewpt_Temp_38m';
 datastream{35}.instrument.measures = 'MEASTYPE';             % measurement type
 datastream{35}.instrument.units =sprintf('%cC',char(176));    % units (SI as far as possible)
-datastream{35}.instrument.nanvalue =-99999;                       % NaN value
+datastream{35}.qc.nanvalue =-99999;                       % NaN value
 datastream{35}.instrument.skipnsamples = 20;
 
 datastream{35}.qc.doqc = 1;
@@ -927,7 +916,7 @@ datastream{36}.instrument.variable = 'Dewpt_Temp_3m';                  % variabl
 datastream{36}.instrument.TDMSchanName = 'Dewpt_Temp_3m';
 datastream{36}.instrument.measures = 'MEASTYPE';             % measurement type
 datastream{36}.instrument.units =sprintf('%cC',char(176));    % units (SI as far as possible)
-datastream{36}.instrument.nanvalue =-99999;                       % NaN value
+datastream{36}.qc.nanvalue =-99999;                       % NaN value
 datastream{36}.instrument.skipnsamples = 20;
 
 datastream{36}.qc.doqc = 1;
@@ -955,7 +944,7 @@ datastream{37}.instrument.TDMSchanName = 'DeltaT_122-87m';
 
 datastream{37}.instrument.measures = 'Differential temperature';             % measurement type
 datastream{37}.instrument.units = 'K';     % units (SI as far as possible)
-datastream{37}.instrument.nanvalue =-99999;                       % NaN value
+datastream{37}.qc.nanvalue =-99999;                       % NaN value
 datastream{37}.instrument.skipnsamples = 20;
 
 datastream{37}.qc.doqc = 1;
@@ -983,7 +972,7 @@ datastream{38}.instrument.TDMSchanName = 'DeltaT_87-38m';
 
 datastream{38}.instrument.measures = 'Differential temperature';             % measurement type
 datastream{38}.instrument.units = 'K';        % units (SI as far as possible)
-datastream{38}.instrument.nanvalue = -99999;                       % NaN value
+datastream{38}.qc.nanvalue = -99999;                       % NaN value
 datastream{38}.instrument.skipnsamples = 20;
 
 datastream{38}.qc.doqc = 1;
@@ -1010,7 +999,7 @@ datastream{39}.instrument.variable = 'DeltaT_38_3m';                  % variable
 datastream{39}.instrument.TDMSchanName = 'DeltaT_38-3m';
 datastream{39}.instrument.measures = 'MEASTYPE';             % measurement type
 datastream{39}.instrument.units = 'K';      % units (SI as far as possible)
-datastream{39}.instrument.nanvalue =-99999;                       % NaN value
+datastream{39}.qc.nanvalue =-99999;                       % NaN value
 datastream{39}.instrument.skipnsamples = 20;
 
 datastream{39}.qc.doqc = 1;
@@ -1037,7 +1026,7 @@ datastream{40}.instrument.variable = 'Vane_WD_122m';                  % variable
 datastream{40}.instrument.TDMSchanName = 'Vane_WD_122m';
 datastream{40}.instrument.measures = 'wind direction';             % measurement type
 datastream{40}.instrument.units = sprintf('%c',char(176));              % units (SI as far as possible)
-datastream{40}.instrument.nanvalue =-99999;                       % NaN value
+datastream{40}.qc.nanvalue =-99999;                       % NaN value
 datastream{40}.instrument.skipnsamples = 20;
 
 datastream{40}.qc.doqc = 1;
@@ -1064,7 +1053,7 @@ datastream{41}.instrument.variable = 'Vane_WD_87m';                  % variable 
 datastream{41}.instrument.TDMSchanName = 'Vane_WD_87m';
 datastream{41}.instrument.measures = 'wind direction';             % measurement type
 datastream{41}.instrument.units = sprintf('%c',char(176));            % units (SI as far as possible)
-datastream{41}.instrument.nanvalue =-99999;                       % NaN value
+datastream{41}.qc.nanvalue =-99999;                       % NaN value
 datastream{41}.instrument.skipnsamples = 20;
 
 datastream{41}.qc.doqc = 1;
@@ -1091,7 +1080,7 @@ datastream{42}.instrument.variable = 'Vane_WD_38m';                  % variable 
 datastream{42}.instrument.TDMSchanName = 'Vane_WD_38m';
 datastream{42}.instrument.measures = 'wind direction';             % measurement type
 datastream{42}.instrument.units = sprintf('%c',char(176));                   % units (SI as far as possible)
-datastream{42}.instrument.nanvalue =-99999;                       % NaN value
+datastream{42}.qc.nanvalue =-99999;                       % NaN value
 datastream{42}.instrument.skipnsamples = 20;
 
 datastream{42}.qc.doqc = 1;
@@ -1118,7 +1107,7 @@ datastream{43}.instrument.variable = 'Vane_WD_10m';                  % variable 
 datastream{43}.instrument.TDMSchanName = 'Vane_WD_10m';
 datastream{43}.instrument.measures = 'wind direction';             % measurement type
 datastream{43}.instrument.units = sprintf('%c',char(176));                  % units (SI as far as possible)
-datastream{43}.instrument.nanvalue =-99999;                       % NaN value
+datastream{43}.qc.nanvalue =-99999;                       % NaN value
 datastream{43}.instrument.skipnsamples = 20;
 
 datastream{43}.qc.doqc = 1;
@@ -1145,7 +1134,7 @@ datastream{44}.instrument.variable = 'Vane_WD_3m';                  % variable n
 datastream{44}.instrument.TDMSchanName = 'Vane_WD_3m';
 datastream{44}.instrument.measures = 'wind direction';             % measurement type
 datastream{44}.instrument.units =sprintf('%c',char(176));                 % units (SI as far as possible)
-datastream{44}.instrument.nanvalue =-99999;                       % NaN value
+datastream{44}.qc.nanvalue =-99999;                       % NaN value
 datastream{44}.instrument.skipnsamples = 20;
 
 datastream{44}.qc.doqc = 1;
@@ -1172,7 +1161,7 @@ datastream{45}.instrument.variable = 'Accel_x_119';                  % variable 
 datastream{45}.instrument.TDMSchanName = '119_Accel_X';
 datastream{45}.instrument.measures = 'acceleration';             % measurement type
 datastream{45}.instrument.units ='mg';                      % units (SI as far as possible)
-datastream{45}.instrument.nanvalue =-99999;                       % NaN value
+datastream{45}.qc.nanvalue =-99999;                       % NaN value
 
 datastream{45}.qc.doqc = 1;
 datastream{45}.qc.range.max = 2;              % maximum measurement value
@@ -1198,7 +1187,7 @@ datastream{46}.instrument.variable = 'Accel_y_119';                  % variable 
 datastream{46}.instrument.TDMSchanName = '119_Accel_Y';
 datastream{46}.instrument.measures = 'accleration';             % measurement type
 datastream{46}.instrument.units ='mg';                      % units (SI as far as possible)
-datastream{46}.instrument.nanvalue =-99999;                       % NaN value
+datastream{46}.qc.nanvalue =-99999;                       % NaN value
 
 datastream{46}.qc.doqc = 1;
 datastream{46}.qc.range.max = 2;              % maximum measurement value
@@ -1224,7 +1213,7 @@ datastream{47}.instrument.variable = 'Accel_z_119';                  % variable 
 datastream{47}.instrument.TDMSchanName = '119_Accel_Z';
 datastream{47}.instrument.measures = 'acceleration';             % measurement type
 datastream{47}.instrument.units ='mg';                      % units (SI as far as possible)
-datastream{47}.instrument.nanvalue =-99999;                       % NaN value
+datastream{47}.qc.nanvalue =-99999;                       % NaN value
 
 datastream{47}.qc.doqc = 1;
 datastream{47}.qc.range.max = 2;              % maximum measurement value
@@ -1250,7 +1239,7 @@ datastream{48}.instrument.variable = 'Accel_x_100';                  % variable 
 datastream{48}.instrument.TDMSchanName = '100_Accel_X';
 datastream{48}.instrument.measures = 'acceleration';             % measurement type
 datastream{48}.instrument.units ='mg';                      % units (SI as far as possible)
-datastream{48}.instrument.nanvalue =-99999;                       % NaN value
+datastream{48}.qc.nanvalue =-99999;                       % NaN value
 
 datastream{48}.qc.doqc = 1;
 datastream{48}.qc.range.max = 2;              % maximum measurement value
@@ -1276,7 +1265,7 @@ datastream{49}.instrument.variable = 'Accel_y_100';                  % variable 
 datastream{49}.instrument.TDMSchanName = '100_Accel_Y';
 datastream{49}.instrument.measures = 'acceleration';             % measurement type
 datastream{49}.instrument.units ='mg';                      % units (SI as far as possible)
-datastream{49}.instrument.nanvalue =-99999;                       % NaN value
+datastream{49}.qc.nanvalue =-99999;                       % NaN value
 
 datastream{49}.qc.doqc = 1;
 datastream{49}.qc.range.max = 2;              % maximum measurement value
@@ -1302,7 +1291,7 @@ datastream{50}.instrument.variable = 'Accel_z_100';                  % variable 
 datastream{50}.instrument.TDMSchanName = '100_Accel_Z';
 datastream{50}.instrument.measures = 'acceleration';             % measurement type
 datastream{50}.instrument.units ='mg';                      % units (SI as far as possible)
-datastream{50}.instrument.nanvalue =-99999;                       % NaN value
+datastream{50}.qc.nanvalue =-99999;                       % NaN value
 
 datastream{50}.qc.doqc = 1;
 datastream{50}.qc.range.max = 2;              % maximum measurement value
@@ -1328,7 +1317,7 @@ datastream{51}.instrument.variable = 'Accel_x_74';                  % variable n
 datastream{51}.instrument.TDMSchanName = '74_Accel_X';
 datastream{51}.instrument.measures = 'acceleration';             % measurement type
 datastream{51}.instrument.units ='mg';                      % units (SI as far as possible)
-datastream{51}.instrument.nanvalue =-99999;                       % NaN value
+datastream{51}.qc.nanvalue =-99999;                       % NaN value
 
 datastream{51}.qc.doqc = 1;
 datastream{51}.qc.range.max = 2;              % maximum measurement value
@@ -1354,7 +1343,7 @@ datastream{52}.instrument.variable = 'Accel_y_74';                  % variable n
 datastream{52}.instrument.TDMSchanName = '74_Accel_Y';
 datastream{52}.instrument.measures = 'acceleration';             % measurement type
 datastream{52}.instrument.units ='mg';                      % units (SI as far as possible)
-datastream{52}.instrument.nanvalue =-99999;                       % NaN value
+datastream{52}.qc.nanvalue =-99999;                       % NaN value
 
 datastream{52}.qc.doqc = 1;
 datastream{52}.qc.range.max = 2;              % maximum measurement value
@@ -1380,7 +1369,7 @@ datastream{53}.instrument.variable = 'Accel_z_74';                  % variable n
 datastream{53}.instrument.TDMSchanName = '74_Accel_Z';
 datastream{53}.instrument.measures = 'acceleration';             % measurement type
 datastream{53}.instrument.units ='mg';                      % units (SI as far as possible)
-datastream{53}.instrument.nanvalue =-99999;                       % NaN value
+datastream{53}.qc.nanvalue =-99999;                       % NaN value
 
 datastream{53}.qc.doqc = 1;
 datastream{53}.qc.range.max = 2;              % maximum measurement value
@@ -1406,7 +1395,7 @@ datastream{54}.instrument.variable = 'Accel_x_61';                  % variable n
 datastream{54}.instrument.TDMSchanName = '61_Accel_X';
 datastream{54}.instrument.measures = 'acceleration';             % measurement type
 datastream{54}.instrument.units ='mg';                      % units (SI as far as possible)
-datastream{54}.instrument.nanvalue =-99999;                       % NaN value
+datastream{54}.qc.nanvalue =-99999;                       % NaN value
 
 datastream{54}.qc.doqc = 1;
 datastream{54}.qc.range.max = 2;              % maximum measurement value
@@ -1432,7 +1421,7 @@ datastream{55}.instrument.variable = 'Accel_y_61';                  % variable n
 datastream{55}.instrument.TDMSchanName = '61_Accel_Y';
 datastream{55}.instrument.measures = 'acceleration';             % measurement type
 datastream{55}.instrument.units ='mg';                      % units (SI as far as possible)
-datastream{55}.instrument.nanvalue =-99999;                       % NaN value
+datastream{55}.qc.nanvalue =-99999;                       % NaN value
 
 datastream{55}.qc.doqc = 1;
 datastream{55}.qc.range.max = 2;              % maximum measurement value
@@ -1458,7 +1447,7 @@ datastream{56}.instrument.variable = 'Accel_z_61';                  % variable n
 datastream{56}.instrument.TDMSchanName = '61_Accel_Z';
 datastream{56}.instrument.measures = 'Acceleration';             % measurement type
 datastream{56}.instrument.units ='mg';                      % units (SI as far as possible)
-datastream{56}.instrument.nanvalue =-99999;                       % NaN value
+datastream{56}.qc.nanvalue =-99999;                       % NaN value
 
 datastream{56}.qc.doqc = 1;
 datastream{56}.qc.range.max = 2;              % maximum measurement value
@@ -1484,7 +1473,7 @@ datastream{57}.instrument.variable = 'Accel_x_41';                  % variable n
 datastream{57}.instrument.TDMSchanName = '41_Accel_X';
 datastream{57}.instrument.measures = 'acceleration';             % measurement type
 datastream{57}.instrument.units ='mg';                      % units (SI as far as possible)
-datastream{57}.instrument.nanvalue =-99999;                       % NaN value
+datastream{57}.qc.nanvalue =-99999;                       % NaN value
 
 datastream{57}.qc.doqc = 1;
 datastream{57}.qc.range.max = 2;              % maximum measurement value
@@ -1510,7 +1499,7 @@ datastream{58}.instrument.variable = 'Accel_y_41';                  % variable n
 datastream{58}.instrument.TDMSchanName = '41_Accel_YX';
 datastream{58}.instrument.measures = 'acceleration';             % measurement type
 datastream{58}.instrument.units ='mg';                      % units (SI as far as possible)
-datastream{58}.instrument.nanvalue =-99999;                       % NaN value
+datastream{58}.qc.nanvalue =-99999;                       % NaN value
 
 datastream{58}.qc.doqc = 1;
 datastream{58}.qc.range.max = 2;              % maximum measurement value
@@ -1536,7 +1525,7 @@ datastream{59}.instrument.variable = 'Accel_z_41';                  % variable n
 datastream{59}.instrument.TDMSchanName = '41_Accel_Z';
 datastream{59}.instrument.measures = 'acceleration';             % measurement type
 datastream{59}.instrument.units ='mg';                      % units (SI as far as possible)
-datastream{59}.instrument.nanvalue =-99999;                       % NaN value
+datastream{59}.qc.nanvalue =-99999;                       % NaN value
 
 datastream{59}.qc.doqc = 1;
 datastream{59}.qc.range.max = 2;              % maximum measurement value
@@ -1562,7 +1551,7 @@ datastream{60}.instrument.variable = 'Accel_x_15';                  % variable n
 datastream{60}.instrument.TDMSchanName = '15_Accel_X';
 datastream{60}.instrument.measures = 'acceleration';             % measurement type
 datastream{60}.instrument.units ='mg';                      % units (SI as far as possible)
-datastream{60}.instrument.nanvalue =-99999;                       % NaN value
+datastream{60}.qc.nanvalue =-99999;                       % NaN value
 
 datastream{60}.qc.doqc = 1;
 datastream{60}.qc.range.max = 2;              % maximum measurement value
@@ -1588,7 +1577,7 @@ datastream{61}.instrument.variable = 'Accel_y_15';                  % variable n
 datastream{61}.instrument.TDMSchanName = '15_Accel_Y';
 datastream{61}.instrument.measures = 'acceleration';             % measurement type
 datastream{61}.instrument.units ='mg';                      % units (SI as far as possible)
-datastream{61}.instrument.nanvalue =-99999;                       % NaN value
+datastream{61}.qc.nanvalue =-99999;                       % NaN value
 
 datastream{61}.qc.doqc = 1;
 datastream{61}.qc.range.max = 2;              % maximum measurement value
@@ -1614,7 +1603,7 @@ datastream{62}.instrument.variable = 'Accel_z_15';                  % variable n
 datastream{62}.instrument.TDMSchanName = '15_Accel_Z';
 datastream{62}.instrument.measures = 'acceleration';             % measurement type
 datastream{62}.instrument.units ='mg';                      % units (SI as far as possible)
-datastream{62}.instrument.nanvalue =-99999;                       % NaN value
+datastream{62}.qc.nanvalue =-99999;                       % NaN value
 
 datastream{62}.qc.doqc = 1;
 datastream{62}.qc.range.max = 2;              % maximum measurement value
@@ -1640,7 +1629,7 @@ datastream{63}.instrument.variable = 'Baro_Presr_3m';                  % variabl
 datastream{63}.instrument.TDMSchanName = 'Baro_Press_3m';
 datastream{63}.instrument.measures = 'MEASTYPE';             % measurement type
 datastream{63}.instrument.units ='hPa';                      % units (SI as far as possible)
-datastream{63}.instrument.nanvalue =-99999;                       % NaN value
+datastream{63}.qc.nanvalue =-99999;                       % NaN value
 datastream{63}.instrument.skipnsamples = 20;
 
 datastream{63}.qc.doqc = 1;
@@ -1667,7 +1656,7 @@ datastream{64}.instrument.variable = 'PRECIP_INTEN';                  % variable
 datastream{64}.instrument.TDMSchanName = 'Precip_Inten';
 datastream{64}.instrument.measures = 'precipitation intensity';             % measurement type
 datastream{64}.instrument.units ='VDC';                      % units (SI as far as possible)
-datastream{64}.instrument.nanvalue =-99999;                       % NaN value
+datastream{64}.qc.nanvalue =-99999;                       % NaN value
 datastream{64}.instrument.skipnsamples = 20;
 
 datastream{64}.qc.doqc = 1;
@@ -1696,7 +1685,7 @@ datastream{65}.instrument.variable = 'Cup_WS_C1_130m';                  % variab
 datastream{65}.instrument.TDMSchanName = 'Cup_WS_130m';
 datastream{65}.instrument.measures = 'speed';             % measurement type
 datastream{65}.instrument.units ='m/s';                      % units (SI as far as possible)
-datastream{65}.instrument.nanvalue =-99999;                       % NaN value
+datastream{65}.qc.nanvalue =-99999;                       % NaN value
 datastream{65}.instrument.skipnsamples = 20;
 
 datastream{65}.qc.doqc = 1;
@@ -1723,7 +1712,7 @@ datastream{66}.instrument.variable = 'Cup_WS_122m';                  % variable 
 datastream{66}.instrument.TDMSchanName = 'Cup_WS_122m';
 datastream{66}.instrument.measures = 'speed';             % measurement type
 datastream{66}.instrument.units ='m/s';                      % units (SI as far as possible)
-datastream{66}.instrument.nanvalue =-99999;                       % NaN value
+datastream{66}.qc.nanvalue =-99999;                       % NaN value
 datastream{66}.instrument.skipnsamples = 20;
 
 datastream{66}.qc.doqc = 1;
@@ -1750,7 +1739,7 @@ datastream{67}.instrument.variable = 'Cup_WS_C1_105m';                  % variab
 datastream{67}.instrument.TDMSchanName = 'Cup_WS_105m';
 datastream{67}.instrument.measures = 'speed';             % measurement type
 datastream{67}.instrument.units ='m/s';                      % units (SI as far as possible)
-datastream{67}.instrument.nanvalue =-99999;                       % NaN value
+datastream{67}.qc.nanvalue =-99999;                       % NaN value
 datastream{67}.instrument.skipnsamples = 20;
 
 datastream{67}.qc.doqc = 1;
@@ -1777,7 +1766,7 @@ datastream{68}.instrument.variable = 'Cup_WS_87m';                  % variable n
 datastream{68}.instrument.TDMSchanName = 'Cup_WS_87m';
 datastream{68}.instrument.measures = 'speed';             % measurement type
 datastream{68}.instrument.units ='m/s';                      % units (SI as far as possible)
-datastream{68}.instrument.nanvalue =-99999;                       % NaN value
+datastream{68}.qc.nanvalue =-99999;                       % NaN value
 datastream{68}.instrument.skipnsamples = 20;
 
 datastream{68}.qc.doqc = 1;
@@ -1805,7 +1794,7 @@ datastream{69}.instrument.TDMSchanName = 'Cup_WS_80m';
 
 datastream{69}.instrument.measures = 'speed';             % measurement type
 datastream{69}.instrument.units ='m/s';                      % units (SI as far as possible)
-datastream{69}.instrument.nanvalue =-99999;                       % NaN value
+datastream{69}.qc.nanvalue =-99999;                       % NaN value
 datastream{69}.instrument.skipnsamples = 20;
 
 datastream{69}.qc.doqc = 1;
@@ -1833,7 +1822,7 @@ datastream{70}.instrument.TDMSchanName = 'Cup_WS_55m';
 
 datastream{70}.instrument.measures = 'speed';             % measurement type
 datastream{70}.instrument.units ='m/s';                      % units (SI as far as possible)
-datastream{70}.instrument.nanvalue =-99999;                       % NaN value
+datastream{70}.qc.nanvalue =-99999;                       % NaN value
 datastream{70}.instrument.skipnsamples = 20;
 
 datastream{70}.qc.doqc = 1;
@@ -1861,7 +1850,7 @@ datastream{71}.instrument.TDMSchanName = 'Cup_WS_38m';
 
 datastream{71}.instrument.measures = 'speed';             % measurement type
 datastream{71}.instrument.units ='m/s';                      % units (SI as far as possible)
-datastream{71}.instrument.nanvalue =-99999;                       % NaN value
+datastream{71}.qc.nanvalue =-99999;                       % NaN value
 datastream{71}.instrument.skipnsamples = 20;
 
 datastream{71}.qc.doqc = 1;
@@ -1888,7 +1877,7 @@ datastream{72}.instrument.variable = 'Cup_WS_C1_30m';                  % variabl
 datastream{72}.instrument.TDMSchanName = 'Cup_WS_30m';
 datastream{72}.instrument.measures = 'speed';             % measurement type
 datastream{72}.instrument.units ='m/s';                      % units (SI as far as possible)
-datastream{72}.instrument.nanvalue =-99999;                       % NaN value
+datastream{72}.qc.nanvalue =-99999;                       % NaN value
 datastream{72}.instrument.skipnsamples = 20;
 
 datastream{72}.qc.doqc = 1;
@@ -1915,7 +1904,7 @@ datastream{73}.instrument.variable = 'Cup_WS_10m';                  % variable n
 datastream{73}.instrument.TDMSchanName = 'Cup_WS_10m';
 datastream{73}.instrument.measures = 'speed';             % measurement type
 datastream{73}.instrument.units ='m/s';                      % units (SI as far as possible)
-datastream{73}.instrument.nanvalue =-99999;                       % NaN value
+datastream{73}.qc.nanvalue =-99999;                       % NaN value
 datastream{73}.instrument.skipnsamples = 20;
 
 datastream{73}.qc.doqc = 1;
@@ -1942,7 +1931,7 @@ datastream{74}.instrument.variable = 'Cup_WS_3m';                  % variable na
 datastream{74}.instrument.TDMSchanName = 'Cup_WS_3m';
 datastream{74}.instrument.measures = 'speed';             % measurement type
 datastream{74}.instrument.units ='m/s';                      % units (SI as far as possible)
-datastream{74}.instrument.nanvalue =-99999;                       % NaN value
+datastream{74}.qc.nanvalue =-99999;                       % NaN value
 datastream{74}.instrument.skipnsamples = 20;
 
 datastream{74}.qc.doqc = 1;
@@ -1971,7 +1960,7 @@ datastream{75}.instrument.variable = 'Precip_TF';                  % variable na
 datastream{75}.instrument.TDMSchanName = 'PRECIP';
 datastream{75}.instrument.measures = 'Precipitation';             % measurement type
 datastream{75}.instrument.units ='TF';                      % units (SI as far as possible)
-datastream{75}.instrument.nanvalue =-99999;                       % NaN value
+datastream{75}.qc.nanvalue =-99999;                       % NaN value
 datastream{75}.instrument.skipnsamples = 20;
 
 datastream{75}.qc.doqc = 1;
@@ -2000,7 +1989,7 @@ datastream{76}.instrument.variable = 'GPS_Lock_TF';                  % variable 
 datastream{76}.instrument.TDMSchanName = 'GPSLOCK';
 datastream{76}.instrument.measures = 'GPS';             % measurement type
 datastream{76}.instrument.units ='TF';                      % units (SI as far as possible)
-datastream{76}.instrument.nanvalue =-99999;                       % NaN value
+datastream{76}.qc.nanvalue =-99999;                       % NaN value
 datastream{76}.instrument.skipnsamples = 20;
 
 datastream{76}.qc.doqc = 1;
@@ -2027,7 +2016,7 @@ datastream{77}.instrument.variable = 'UPS_OK_TF';                  % variable na
 datastream{77}.instrument.TDMSchanName = 'UPS_STATUS';
 datastream{77}.instrument.measures = 'UPS';             % measurement type
 datastream{77}.instrument.units ='TF';                      % units (SI as far as possible)
-datastream{77}.instrument.nanvalue =-99999;                       % NaN value
+datastream{77}.qc.nanvalue =-99999;                       % NaN value
 datastream{77}.instrument.skipnsamples = 20;
 
 datastream{77}.qc.doqc = 1;
@@ -2057,7 +2046,7 @@ datastream{78}.instrument.variable = 'Asp_122';                  % variable name
 datastream{78}.instrument.TDMSchanName = 'ASP_STAT_122m';
 datastream{78}.instrument.measures = 'Aspirator';             % measurement type
 datastream{78}.instrument.units ='TF';                      % units (SI as far as possible)
-datastream{78}.instrument.nanvalue =-99999;                       % NaN value
+datastream{78}.qc.nanvalue =-99999;                       % NaN value
 datastream{78}.instrument.skipnsamples = 20;
 
 datastream{78}.qc.doqc = 1;
@@ -2087,7 +2076,7 @@ datastream{79}.instrument.variable = 'Asp_87';                  % variable name
 datastream{79}.instrument.TDMSchanName = 'ASP_STAT_87m';
 datastream{79}.instrument.measures = 'Aspirator';             % measurement type
 datastream{79}.instrument.units ='TF';                      % units (SI as far as possible)
-datastream{79}.instrument.nanvalue =-99999;                       % NaN value
+datastream{79}.qc.nanvalue =-99999;                       % NaN value
 datastream{79}.instrument.skipnsamples = 20;
 
 datastream{79}.qc.doqc = 1;
@@ -2117,7 +2106,7 @@ datastream{80}.instrument.variable = 'Asp_38';                  % variable name
 datastream{80}.instrument.TDMSchanName = 'ASP_STAT_38m';
 datastream{80}.instrument.measures = 'Aspirator';             % measurement type
 datastream{80}.instrument.units ='TF';                      % units (SI as far as possible)
-datastream{80}.instrument.nanvalue =-99999;                       % NaN value
+datastream{80}.qc.nanvalue =-99999;                       % NaN value
 datastream{80}.instrument.skipnsamples = 20;
 
 datastream{80}.qc.doqc = 1;
@@ -2147,7 +2136,7 @@ datastream{81}.instrument.variable = 'Asp_3';                  % variable name
 datastream{81}.instrument.TDMSchanName = 'ASP_STAT_3m';
 datastream{81}.instrument.measures = 'Aspirator';             % measurement type
 datastream{81}.instrument.units ='TF';                      % units (SI as far as possible)
-datastream{81}.instrument.nanvalue =-99999;                       % NaN value
+datastream{81}.qc.nanvalue =-99999;                       % NaN value
 datastream{81}.instrument.skipnsamples = 20;
 
 datastream{81}.qc.doqc = 1;

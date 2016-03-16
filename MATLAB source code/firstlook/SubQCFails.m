@@ -32,7 +32,7 @@ if isempty(datain)
 	qc_flag(end+1) = 5001;
 end
 % 5002; all bad values
-if sum(datain == datastream_config.instrument.nanvalue) == npoints
+if sum(datain == datastream_config.qc.nanvalue) == npoints
 	qc_flag(end+1) = 5002;
 end
 % 5003; All NaN's

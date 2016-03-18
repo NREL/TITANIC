@@ -12,7 +12,7 @@ This code analyses data obtained from a meteorological tower and extracts a rang
 Click on the "Download ZIP" button on the lower right of this page. 
 
 #Installing and using the scripts
-1. Unpack the .zip file. You will a directory structure as follows: 
+1. Unpack the .zip file. You will find the following directory structure: 
   1. `MATLAB source code` contains the meat of the TITANIC code.
   2. `/local/MetData/M5Twr` contains raw test data.
   3. `webserver` represents a web server. This will be your pseudo web output, corresponding to the archives at http://wind.nrel.gov/MetData/135mData/M5Twr/

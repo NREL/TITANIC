@@ -13,13 +13,13 @@ Click on the "Download ZIP" button on the lower right of this page.
 
 #Installing and using the scripts
 1. Unpack the .zip file. You will a directory structure as follows: 
-  1. `firstlook` and `helper_files` contain code.
+  1. `MATLAB source code` contains the meat of the TITANIC code.
   2. `/local/MetData/M5Twr` contains raw test data.
   3. `webserver` represents a web server. This will be your pseudo web output, corresponding to the archives at http://wind.nrel.gov/MetData/135mData/M5Twr/
 3. Open `AdminCodeTester.m`. 
   1. Change `C:\blah\`, etc to the path to the directory you just created. 
   2. Run the first few cells to set your paths.
-6. Try each cells in order. Each calls different scripts:
+6. Try each cell in `AdminCodeTester` in order. Each cell calls different scripts:
   1. `TowerRunAnalysis.m`: read in a raw data file and analyse the data. Push results to file in the directory, and push files to the web.
   2. `TowerPlotSummaryData.m`: create summaries of data for arbitrary periods.
   3. `TowerDeleteCorruptData.m`: check the web archive for damaged files
@@ -29,13 +29,10 @@ Click on the "Download ZIP" button on the lower right of this page.
 Scripts can be compiled and run from a Windows command line using the MATLAB MCR. 
 
 #Documentation
-You're reading it. See also comments in the code.
+Most of the code and outputs are documented in the wiki at https://github.com/NREL/TITANIC/wiki.
 
 #Reporting issues and errors
 Please use the issue-tracker at https://github.com/NREL/TITANIC/issues to report issues.
-
-#Wiki
-Please use the wiki at https://github.com/NREL/TITANIC/wiki as you feel fit.
 
 #Code Maintainers
 * [Andy Clifton](mailto:andrew.clifton@nrel.gov) (National Renewable Energy Laboratory)

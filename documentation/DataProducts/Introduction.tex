@@ -1,0 +1,40 @@
+% !TEX root =  TITANICDataProducts.tex
+\chapter{Introduction}
+This document is a companion to the NREL Turbine Inflow and Turbulence Analysis Code (TITANIC), which can be found at \href{https://github.com/NREL/TITANIC}{https://github.com/NREL/TITANIC}.
+
+The purpose of this document is to help users of data created by TITANIC navigate that data and perform useful operations on the data. This document is not supported, and is not guaranteed to be current.
+
+This document uses the example of the NREL M4 and M4 towers from 2011 to 2016. These towers are described in \cite{Clifton_2013_c}.
+
+\section{Met tower data}
+Meteorological towers generate 2 main types of data that are differentiated by the measurement frequency. These are:
+\begin{itemize}
+\item 20 Hz data, which is the frequency with which measurements are made by the tower instruments.
+\item 10-minute data, which is the period over which the 20-Hz data are averaged to quantify atmospheric conditions.
+\end{itemize}
+
+The data flows can be visualized using the data flow diagrams in Figure \ref{fig:NWTCDFD}.
+
+\begin{figure}
+\centering
+%\subfloat[20 Hz data is written to local storage (A1) and then copied to network storage (B1).\label{fig:20HzDFD}]{\includegraphics[width=0.85\textwidth]{../figures/M4M5_data_collection_DFD}}\\
+%\subfloat[20 Hz data is read from the network storage (B1), processed and written to the web server (W1), from where it can be accessed by users.\label{fig:10minDFD}]{\includegraphics[width=0.85\textwidth]{../figures/M4M5_data_processing_DFD}}\\
+%\subfloat[20 Hz data is posted on request to archives that can be accessed by users.\label{fig:20HzExportDFD}]{\includegraphics[width=0.85\textwidth]{../figures/M4M5_data_export_DFD}}
+\caption[Data Flow Diagrams for the meteorological tower data]{Data Flow Diagrams for the meteorological tower data. \label{fig:NWTCDFD}}
+\end{figure}
+
+
+\section{Version}
+This document was last updated on \today. It documents data that are created using the tower software version 1.21 and higher, released on January 19, 2013.
+
+\section{How to use this document}
+Assume that you have some data from the National Wind technology Center's (NWTC) 135-m tall meteorological towers, and want to know how to interpret it:
+\begin{itemize}
+\item if it is high-frequency MATLAB\footnote{MATLAB is a registered trademark of The MathWorks, Inc. Other product or brand names may be trademarks or registered trademarks of their respective holders.} data (file extension *.mat, containing lots of variables in a single file), see Section \ref{s:HFMatlab}.
+\item if it is high-frequency ASCII text data (file extension *.txt, text headers followed by 3 header rows, 12,000 data rows, around 100 columns), see Section \ref{s:HFASCII}.
+\item if it is a MATLAB file giving averaged data for a single, ten-minute interval, see Chapter \ref{s:TenMinuteMatFiles}.
+\item if it is a MATLAB file giving averaged data for lots of ten-minute intervals, see Section \ref{s:LFMatlab}.
+\item if it is an ASCII text file giving data for lots of ten-minute intervals (2 header rows, 1 data row per 10 minutes, 400 or more columns), see Section \ref{s:LFASCII}.
+\end{itemize}
+
+This PDF document is also searchable.

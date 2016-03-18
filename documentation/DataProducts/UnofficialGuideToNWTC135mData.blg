@@ -1,0 +1,50 @@
+This is BibTeX, Version 0.99d (TeX Live 2015)
+Capacity: max_strings=35307, hash_size=35307, hash_prime=30011
+The top-level auxiliary file: UnofficialGuideToNWTC135mData.aux
+A level-1 auxiliary file: Introduction.aux
+A level-1 auxiliary file: RawData.aux
+A level-1 auxiliary file: TenMinuteSummaryFiles.aux
+A level-1 auxiliary file: ConcatenatedDataFiles.aux
+The style file: plainnat.bst
+Database file #1: /Users/aclifton/Documents/bibliography/bibliography.bib
+You've used 2 entries,
+            2773 wiz_defined-function locations,
+            618 strings with 5723 characters,
+and the built_in function-call counts, 1323 in all, are:
+= -- 110
+> -- 114
+< -- 0
++ -- 38
+- -- 36
+* -- 134
+:= -- 220
+add.period$ -- 9
+call.type$ -- 2
+change.case$ -- 18
+chr.to.int$ -- 2
+cite$ -- 4
+duplicate$ -- 41
+empty$ -- 76
+format.name$ -- 38
+if$ -- 258
+int.to.chr$ -- 1
+int.to.str$ -- 1
+missing$ -- 2
+newline$ -- 21
+num.names$ -- 8
+pop$ -- 29
+preamble$ -- 1
+purify$ -- 16
+quote$ -- 0
+skip$ -- 37
+stack$ -- 0
+substring$ -- 35
+swap$ -- 3
+text.length$ -- 0
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 22
+warning$ -- 0
+while$ -- 8
+width$ -- 0
+write$ -- 39

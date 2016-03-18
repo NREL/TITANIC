@@ -1,0 +1,132 @@
+% !TEX root = M4_data_processing.tex
+\chapter{MATLAB helper functions}
+The following scripts and functions are implemented in MATLAB and are available on request. The scripts and functions are designed to work with data from the towers, to simplify regularly-needed tasks. No guarantee is made as to their efficacy or proper function.
+
+\section{Data Concatenation}
+\subsection[\mfunction{data\_finder()}]{Combining multiple data files\label{sec:data_finder}}
+Combine all of the processed data in a given time range using the function \mfunction{data\_finder()}:
+
+\begin{lstlisting}
+% define the date range
+from_date = [2012 1 1 0 0 0];	% yyyy mm dd HH MM SS
+to_date = [2012 3 1 0 0 0];	% yyyy mm dd HH MM SS
+% read data stored in the 'test' directory and combine this into an 'all_data' structure
+all_data = data_finder('data_root','~/Documents/projects/test/',...
+        'from_date',from_date,...
+        'to_date',to_date);
+% and save the output data, including the dates that we    
+save('../paper/test_data.mat','all_data','from_date','to_date')
+\end{lstlisting}
+
+In the above example, data from January 1, 2012 to March 1, 2012, in the 'test' directory will be combined and written to the variable \mvar{all\_data}. The data will be saved in the file, \mfile{test\_data.mat}. The \mvar{all\_data} structure would include all of the data fields. So, to access the wind speed, use the syntax \mvar{all\_data.Wind\_Speed\_Cups\_<z>m.val}.
+
+\section{Time series}
+\subsection[\mfunction{get\_common\_times()}]{Aligning data that have different time series}
+The function \mfunction{[tc,ts1i,ts2i] = get\_common\_times(t1,t2,tbuff)} finds the common times in the time series, \mvar{t1} and \mvar{t2}. A buffer time period \mvar{tbuff} is required, for example 1 minute. All times should be in MATLAB serial date format. For example:
+
+\begin{lstlisting}
+% define our time window
+tstart = datenum([2012 1 1 0 0 0]);
+tend = datenum([2012 1 3 0 0 0]);
+%create a time series with 1-hour steps
+ts1 = tstart:1/24:tend;
+%create another time series with 10-minute steps
+ts2 = tstart:10/(60*24):tend;
+% define a buffer of 1 minute
+tbuff = 1/(60*24);
+% find the common time series, and the indices fo the input data that this
+% corresponds to
+[tc,ts1i,ts2i] = get_common_times(ts1,ts2,tbuff)
+% show the first few common time stamps to prove we did this properly
+datevec(tc(1:3))
+datevec(ts1(ts1i(1:3)))
+datevec(ts2(ts2i(1:3)))
+\end{lstlisting}
+
+\noindent will generate these results:
+\begin{lstlisting}
+ans =
+        2012           1           1           0           0           0
+        2012           1           1           1           0           0
+        2012           1           1           2           0           0
+ans =
+        2012           1           1           0           0           0
+        2012           1           1           1           0           0
+        2012           1           1           2           0           0
+ans =
+        2012           1           1           0           0           0
+        2012           1           1           1           0           0
+        2012           1           1           2           0           0
+\end{lstlisting}
+
+\noindent so the ouptut indices, \mvar{ts1i} and \mvar{ts2i} can be used to identify coincindent  data.
+
+To use this with the tower data, remember that the date field is part of the data structure for each instrument or derived data. For a concatenated data file, use:
+
+\begin{lstlisting}
+[tc,ts1i,ts2i] = get_common_times(all_data.Air_Temperature_3m.date,...
+	all_data.Air_Temperature_26m.date,...
+	1/(60*24))
+\end{lstlisting}
+
+\section{Filtering data}
+The following functions are designed to be run on concatenated data files (multiple 10-minute files in one structure, where the data structure generated using \mfunction{data\_finder()}). For simplicity, that data structure is assumed to be called \mvar{all\_data}, as in the example above. 
+
+\subsection[\mfunction{tower\_filter\_data()}]{Find variable x when variable y is in a certain range}
+The function \mfunction{tower\_filter\_data(x,y,range,logic)} filters variable \mvar{x} for coincident values of variable \mvar{y} in, or outside, of a two-value range. For example, to exclude unstable atmospheric conditions (i.e. include only stable conditions, defined by the Richardson number), use:
+
+\begin{lstlisting}
+% exclude stable conditions for the 15 m wind rose
+x = tower_filter_data(all_data.Wind_Speed_Sonic_15m_Horizontal,...
+    all_data.Ri_WS_134_88_26_10_3m,...
+    [0 inf],'include');
+\end{lstlisting}
+
+This is identical to:
+
+\begin{lstlisting}
+% exclude stable conditions for the 15 m wind rose
+x = tower_filter_data(all_data.Wind_Speed_Sonic_15m_Horizontal,...
+    all_data.Ri_WS_134_88_26_10_3m,...
+    [-inf 0],'exclude');
+\end{lstlisting}
+
+The variable \mvar{x} will have all the fields that were in \mvar{all\_data.Wind\_Speed\_Sonic\_15m\_Horizontal}, but with out-of-range data removed. This means that there will be less data output than input, e.g.:
+
+\begin{lstlisting}
+>>numel(all_data.Wind_Speed_Sonic_15m_Horizontal.val)
+ans =
+	495
+>>numel(x.val)
+ans =
+	412
+\end{lstlisting}
+
+\subsection[\mfunction{flagstopassflagfail()}]{Finding good data}
+The function \mfunction{[ipass,iflag,ifail] = flagstopassflagfail(flags)} will convert a cell array of QC codes into an index of which cells pass, flag or fail.
+
+For example, consider a dummy cell array:
+
+\begin{lstlisting}
+A{1} = [];
+A{2} = [1001 1002];
+A{3} = [2002 5003];
+A{4} = [];
+[ipass,iflag,ifail] = flagstopassflagfail(A)
+ipass =
+     1 4
+iflag =
+     2
+ifail =
+     3
+\end{lstlisting}
+
+Any failure is seen as more important than a flag, hence \mvar{A\{3\}} is shown as failing.
+
+To find the indices of passes, flagged or failed data in the concatenated tower data, use
+
+\begin{lstlisting}
+[ipass,iflag,ifail] = flagstopassflagfail(all_data.Air_Temperature_3m.flags)
+\end{lstlisting}
+
+\section{Plotting data}

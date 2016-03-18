@@ -1,0 +1,58 @@
+\BOOKMARK [0][-]{chapter.1}{Introduction}{}% 1
+\BOOKMARK [1][-]{section.1.1}{Met tower data}{chapter.1}% 2
+\BOOKMARK [1][-]{section.1.2}{Version}{chapter.1}% 3
+\BOOKMARK [1][-]{section.1.3}{How to use this document}{chapter.1}% 4
+\BOOKMARK [0][-]{chapter.2}{High-frequency time-series data}{}% 5
+\BOOKMARK [1][-]{section.2.1}{What data are measured by the towers?}{chapter.2}% 6
+\BOOKMARK [1][-]{section.2.2}{MATLAB 20-Hz files}{chapter.2}% 7
+\BOOKMARK [2][-]{subsection.2.2.1}{Loading the data file}{section.2.2}% 8
+\BOOKMARK [2][-]{subsection.2.2.2}{Data structure}{section.2.2}% 9
+\BOOKMARK [2][-]{subsection.2.2.3}{Metadata structure}{section.2.2}% 10
+\BOOKMARK [1][-]{section.2.3}{ASCII \(text\) time series file}{chapter.2}% 11
+\BOOKMARK [2][-]{subsection.2.3.1}{Loading the data file}{section.2.3}% 12
+\BOOKMARK [2][-]{subsection.2.3.2}{Data structure}{section.2.3}% 13
+\BOOKMARK [0][-]{chapter.3}{10-minute summary MATLAB data files }{}% 14
+\BOOKMARK [1][-]{section.3.1}{Variable Structure}{chapter.3}% 15
+\BOOKMARK [1][-]{section.3.2}{Metadata}{chapter.3}% 16
+\BOOKMARK [2][-]{subsection.3.2.1}{Data file records}{section.3.2}% 17
+\BOOKMARK [1][-]{section.3.3}{Instrument data}{chapter.3}% 18
+\BOOKMARK [2][-]{subsection.3.3.1}{Channel means and standard deviations}{section.3.3}% 19
+\BOOKMARK [1][-]{section.3.4}{Cup wind speed and turbulence intensity}{chapter.3}% 20
+\BOOKMARK [1][-]{section.3.5}{Sonic Anemometer data}{chapter.3}% 21
+\BOOKMARK [2][-]{subsection.3.5.1}{Horizontal wind speed \(sonic anemometer\)}{section.3.5}% 22
+\BOOKMARK [2][-]{subsection.3.5.2}{Cup-equivalent wind speed \(sonic anemometer\)}{section.3.5}% 23
+\BOOKMARK [2][-]{subsection.3.5.3}{Cup-equivalent turbulence intensity \(sonic anemometer\)}{section.3.5}% 24
+\BOOKMARK [2][-]{subsection.3.5.4}{Total wind speed \(sonic anemometer\)}{section.3.5}% 25
+\BOOKMARK [2][-]{subsection.3.5.5}{Flow angle \(sonic anemometer\)}{section.3.5}% 26
+\BOOKMARK [2][-]{subsection.3.5.6}{Advection wind speed \(sonic anemometer\)}{section.3.5}% 27
+\BOOKMARK [2][-]{subsection.3.5.7}{Standard deviations of velocities and temperatures \(sonic anemometer\)}{section.3.5}% 28
+\BOOKMARK [2][-]{subsection.3.5.8}{Friction velocity \(sonic anemometer\)}{section.3.5}% 29
+\BOOKMARK [2][-]{subsection.3.5.9}{Convective temperature scale \(sonic anemometer\)}{section.3.5}% 30
+\BOOKMARK [2][-]{subsection.3.5.10}{Turbulent kinetic energy \(sonic anemometer\)}{section.3.5}% 31
+\BOOKMARK [2][-]{subsection.3.5.11}{Coherent TKE \(sonic anemometers\)}{section.3.5}% 32
+\BOOKMARK [2][-]{subsection.3.5.12}{integral length scales \(sonic anemometers\)}{section.3.5}% 33
+\BOOKMARK [2][-]{subsection.3.5.13}{Structure functions of velocity and temperature \(sonic anemometers\)}{section.3.5}% 34
+\BOOKMARK [2][-]{subsection.3.5.14}{Dissipation rate \(sonic anemometer\)}{section.3.5}% 35
+\BOOKMARK [1][-]{section.3.6}{Derived Data}{chapter.3}% 36
+\BOOKMARK [2][-]{subsection.3.6.1}{Wind direction \(cups and vanes\)}{section.3.6}% 37
+\BOOKMARK [2][-]{subsection.3.6.2}{Power law velocity profile exponent \(cups\)}{section.3.6}% 38
+\BOOKMARK [2][-]{subsection.3.6.3}{Log law friction velocity and roughness length}{section.3.6}% 39
+\BOOKMARK [2][-]{subsection.3.6.4}{Wind veer \(cups\)}{section.3.6}% 40
+\BOOKMARK [2][-]{subsection.3.6.5}{Rain}{section.3.6}% 41
+\BOOKMARK [2][-]{subsection.3.6.6}{Air temperature}{section.3.6}% 42
+\BOOKMARK [2][-]{subsection.3.6.7}{Relative humidity}{section.3.6}% 43
+\BOOKMARK [2][-]{subsection.3.6.8}{Air pressure}{section.3.6}% 44
+\BOOKMARK [2][-]{subsection.3.6.9}{Potential temperature}{section.3.6}% 45
+\BOOKMARK [2][-]{subsection.3.6.10}{Virtual potential temperature}{section.3.6}% 46
+\BOOKMARK [2][-]{subsection.3.6.11}{Gradient Richardson number}{section.3.6}% 47
+\BOOKMARK [2][-]{subsection.3.6.12}{Speed Gradient Richardson number}{section.3.6}% 48
+\BOOKMARK [2][-]{subsection.3.6.13}{Brunt-Vaisala Frequency}{section.3.6}% 49
+\BOOKMARK [2][-]{subsection.3.6.14}{Heat flux \(sonic anemometers\)}{section.3.6}% 50
+\BOOKMARK [2][-]{subsection.3.6.15}{Monin-Obukhov length}{section.3.6}% 51
+\BOOKMARK [0][-]{chapter.4}{Low-frequency \(10-minute\) time-series data files}{}% 52
+\BOOKMARK [1][-]{section.4.1}{MATLAB files}{chapter.4}% 53
+\BOOKMARK [2][-]{subsection.4.1.1}{Example: checking the version of the data}{section.4.1}% 54
+\BOOKMARK [2][-]{subsection.4.1.2}{Example: plotting the time series of wind speed}{section.4.1}% 55
+\BOOKMARK [2][-]{subsection.4.1.3}{Example: plotting only good data}{section.4.1}% 56
+\BOOKMARK [2][-]{subsection.4.1.4}{Example: finding a subset of data}{section.4.1}% 57
+\BOOKMARK [1][-]{section.4.2}{ASCII files}{chapter.4}% 58

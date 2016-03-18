@@ -1,0 +1,27 @@
+\begin{thebibliography}{2}
+\providecommand{\natexlab}[1]{#1}
+\providecommand{\url}[1]{\texttt{#1}}
+\expandafter\ifx\csname urlstyle\endcsname\relax
+  \providecommand{\doi}[1]{doi: #1}\else
+  \providecommand{\doi}{doi: \begingroup \urlstyle{rm}\Url}\fi
+
+\bibitem[Clifton et~al.(2013)Clifton, Schreck, Scott, Kelley, and
+  Lundquist]{Clifton_2013_c}
+A.~Clifton, S.~Schreck, G.~Scott, N.~D. Kelley, and J.K. Lundquist.
+\newblock Turbine inflow characterization at the {N}ational {W}ind {T}echnology
+  {C}enter.
+\newblock \emph{Journal of Solar Energy Engineering}, 135\penalty0 (3), 2013.
+\newblock \doi{doi:10.1115/1.4024068}.
+
+\bibitem[Pichugina et~al.(2008)Pichugina, Tucker, Banta, Brewer, Kelley,
+  Jonkman, and Newsom]{Pichugina_2008_a}
+Yelena~L. Pichugina, Sara~C. Tucker, Robert~M. Banta, W.~Alan Brewer, Neil~D.
+  Kelley, Bonnie~J. Jonkman, and Rob~K. Newsom.
+\newblock Horizontal-velocity and variance measurements in the stable boundary
+  layer using doppler lidar: Sensitivity to averaging procedures.
+\newblock \emph{Journal of Atmospheric and Oceanic Technology}, 25\penalty0
+  (8):\penalty0 1307--1327, 2012/10/26 2008.
+\newblock \doi{10.1175/2008JTECHA988.1}.
+\newblock URL \url{http://dx.doi.org/10.1175/2008JTECHA988.1}.
+
+\end{thebibliography}

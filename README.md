@@ -12,13 +12,13 @@ This code analyses data obtained from a meteorological tower and extracts a rang
 Click on the "Download ZIP" button on the lower right of this page. 
 
 # Getting Started
-See [Getting Started](TITANIC/wiki/FAQ:-Getting-Started). 
+See [Getting Started](https://github.com/NREL/TITANIC/wiki/FAQ:-Getting-Started). 
 
 #Documentation
-Most of the code and outputs are documented in the [TITANIC wiki](wiki).
+Most of the code and outputs are documented in the [TITANIC wiki](https://github.com/NREL/TITANIC/wiki/).
 
 #Reporting issues and errors
-Please use the [issue-tracker](TITANIC/issues) to report issues.
+Please use the [issue-tracker](https://github.com/NREL/TITANIC/issues) to report issues.
 
 #Code Maintainers
 * [Andy Clifton](mailto:andrew.clifton@nrel.gov) (National Renewable Energy Laboratory)

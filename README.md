@@ -1,26 +1,23 @@
-# TITANIC
-Turbine Inflow Turbulence ANalysIs Code
+# What is TITANIC?
+TITANIC stands for Turbine Inflow Turbulence ANalysIs Code. It analyses data obtained from a meteorological tower and extracts a range of statistics and meteorological information. Data are also converted into a standard format and summarized graphically. For examples of the outputs, see https://nwtc.nrel.gov/M4 and https://nwtc.nrel.gov/M5.
 
-#Introduction
-This code analyses data obtained from a meteorological tower and extracts a range of statistics and meteorological information. Data are also converted into a standard format and summarized graphically. For examples of the outputs, see https://nwtc.nrel.gov/M4 and https://nwtc.nrel.gov/M5.
-
-#Requirements
+# Requirements
 1. MATLAB.
 2. Sense of humor.
 
-#Download
+# Download
 Click on the "Download ZIP" button on the lower right of this page. 
 
 # Getting Started
 See [Getting Started](https://github.com/NREL/TITANIC/wiki/FAQ:-Getting-Started). 
 
-#Documentation
+# Documentation
 Most of the code and outputs are documented in the [TITANIC wiki](https://github.com/NREL/TITANIC/wiki/).
 
-#Reporting issues and errors
+# Reporting issues and errors
 Please use the [issue-tracker](https://github.com/NREL/TITANIC/issues) to report issues.
 
-#Code Maintainers
+# Code Maintainers
 * [Andy Clifton](mailto:andrew.clifton@nrel.gov) (National Renewable Energy Laboratory)
 
 #Project Contributors

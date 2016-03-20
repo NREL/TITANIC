@@ -15,21 +15,18 @@ TITANIC can:
 
 See [How Does TITANIC Fit in a Data Processing Workflow](https://github.com/NREL/TITANIC/wiki/How-Does-TITANIC-Fit-in-a-Data-Processing-Workflow%3F) for details.
 
-# What is TITANIC used for?
+# Where is TITANIC used?
 TITANIC is used by the National Renewable Energy Laboratory to analyze data from the National Wind Technology Center's M4 and M5 135-m towers. Find out more at https://nwtc.nrel.gov/MetData, and see the most recent data at https://nwtc.nrel.gov/M5. All plots were produced by TITANIC.
 
-# How do I use TITANIC?
-TITANIC is a collection of scripts and functions that work together. Follow the links on the right of this page to find out more about what TITANIC can do.
-
-# What do I need to use TITANIC?
+# What do I Need to Use TITANIC?
 1. MATLAB.
 2. Sense of humor.
 
 # How do I Get Started?
-Click on the "Download ZIP" button on the lower right of this page. Then, see [Getting Started](https://github.com/NREL/TITANIC/wiki/FAQ:-Getting-Started). 
+Click on the "Download ZIP" button on the lower right of this page. Then, see the wiki page on [Getting Started](https://github.com/NREL/TITANIC/wiki/FAQ:-Getting-Started). 
 
 # Where's the Documentation?
-Most of the code and outputs are documented in the [TITANIC wiki](https://github.com/NREL/TITANIC/wiki/).
+Most of the code and outputs are documented in the [TITANIC wiki](https://github.com/NREL/TITANIC/wiki/). The code itself is heavily documented.
 
 # How Do I Report Issues or Errors?
 Please use the [issue-tracker](https://github.com/NREL/TITANIC/issues) to report issues.

@@ -83,7 +83,7 @@ INDEX_DEBUG     = params.INDEX_DEBUG;
 
 %DONT CHANGE THESE
 %==========================================================================
-LEAD_IN_LENGTH = 28; %# of bytes of lead in
+LEAD_IN_LENGTH = 28; % of bytes of lead in
 
 %FIGURING OUT WHICH FILE TO READ
 %==========================================================================
@@ -147,7 +147,7 @@ segInfo     = initSegStruct(N_SEGS_GUESS);
 %TEMP VARIABLES
 %==========================================================================
 objectHasRawData    = false(1,MAX_NUM_OBJECTS); %This is needed for adding
-%# of data points together
+% of data points together
 ranOnce    = false;
 nSegs      = 0;
 
@@ -165,7 +165,7 @@ while ftell(fid) ~= eofPosition
     
     nSegs = nSegs + 1;
     if nSegs > length(segInfo)
-        segInfo = [segInfo initSegStruct(N_SEGS_INC)]; %#ok<AGROW>
+        segInfo = [segInfo initSegStruct(N_SEGS_INC)]; %ok<AGROW>
     end
     
     if DEBUG
@@ -215,7 +215,7 @@ while ftell(fid) ~= eofPosition
             %-------------------------------
             objPathLength = fread(fid,1,'uint32');
             temp          = fread(fid,objPathLength,'*uint8');
-            objName       = native2unicode(temp,UNICODE_FORMAT)'; %#ok<*N2UNI>
+            objName       = native2unicode(temp,UNICODE_FORMAT)'; %ok<*N2UNI>
             
             %POPULATE ALL OBJECT LIST
             %----------------------------------------
@@ -224,10 +224,10 @@ while ftell(fid) ~= eofPosition
                 curNumTotalObjects  = curNumTotalObjects + 1;
                 if curNumTotalObjects > length(rawDataInfo)
                     rawDataInfo      = [rawDataInfo      ...
-                        initRawInfoStruct(MAX_NUM_PROPS,MAX_NUM_OBJECTS)]; %#ok<AGROW>
-                    numberDataPoints = [numberDataPoints zeros(1,MAX_NUM_OBJECTS)]; %#ok<AGROW>
-                    objectNameList   = [objectNameList   cell(1,MAX_NUM_OBJECTS)]; %#ok<AGROW>
-                    objectHasRawData = [objectHasRawData false(1,MAX_NUM_OBJECTS)];  %#ok<AGROW>
+                        initRawInfoStruct(MAX_NUM_PROPS,MAX_NUM_OBJECTS)]; %ok<AGROW>
+                    numberDataPoints = [numberDataPoints zeros(1,MAX_NUM_OBJECTS)]; %ok<AGROW>
+                    objectNameList   = [objectNameList   cell(1,MAX_NUM_OBJECTS)]; %ok<AGROW>
+                    objectHasRawData = [objectHasRawData false(1,MAX_NUM_OBJECTS)];  %ok<AGROW>
                 end
                 objIndex            = curNumTotalObjects;
                 objectNameList{curNumTotalObjects} = objName;
@@ -411,7 +411,7 @@ while ftell(fid) ~= eofPosition
         segInfo(nSegs).isInterleaved = flags.isInterleaved;
         segInfo(nSegs).isBigEndian   = flags.isBigEndian;
         
-        %# OF CHUNK PROCESSING
+        % OF CHUNK PROCESSING
         %------------------------------------------------------------------
         totalBytesPerChunk = sum([rawDataInfo(objOrder(1:curObjListCount)).totalSizeBytes]);
         nChunks            = byteSizeRaw/totalBytesPerChunk;
